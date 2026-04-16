@@ -22,6 +22,7 @@ import Signup from "./pages/Signup";
 // Vault pages (protected)
 import VaultDashboard from "./pages/vault/VaultDashboard";
 import VaultLatestDrops from "./pages/vault/VaultLatestDrops";
+import NightmareGenerator from "./pages/vault/NightmareGenerator";
 
 function Router() {
   const { isAuthenticated, loading } = useAuth();
@@ -53,6 +54,7 @@ function Router() {
         <>
           <Route path={"/vault"} component={VaultDashboard} />
           <Route path={"/vault/latest-drops"} component={VaultLatestDrops} />
+          <Route path={"/vault/tools/nightmare-generator"} component={NightmareGenerator} />
         </>
       )}
 

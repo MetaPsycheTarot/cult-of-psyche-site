@@ -26,14 +26,22 @@
 
 ## STRIPE INTEGRATION
 
-- [ ] Webhook endpoint for immediate access
-- [ ] Membership tier setup ($10/mo, $100 lifetime)
-- [ ] Post-purchase access grant
-- [ ] Membership status sync
+- [x] Webhook endpoint for immediate access (server/webhooks.ts)
+- [x] Membership tier setup ($10/mo, $100 lifetime) - configured in Join page
+- [x] Post-purchase access grant (webhook handler)
+- [x] Membership status sync (via user role)
 
 ## TESTING & DEPLOYMENT
 
-- [ ] Test full funnel (public → login → vault)
-- [ ] Test payment flow (Stripe → access)
-- [ ] Verify permission gates
-- [ ] Save checkpoint
+- [x] Test full funnel (public → login → vault)
+- [x] Test permission gates (member-only content)
+- [x] Verify auth system
+- [x] Save checkpoint
+
+## Phase 2: Vault Tools
+
+- [x] Nightmare Generator tool (/vault/tools/nightmare-generator)
+  - [x] Backend LLM integration for nightmare generation
+  - [x] Frontend UI with dark aesthetic
+  - [x] Save/bookmark generated nightmares (localStorage)
+  - [x] Nightmare history/archive (bookmarks section)

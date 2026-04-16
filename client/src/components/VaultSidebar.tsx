@@ -6,7 +6,7 @@ import { trpc } from "@/lib/trpc";
 const navItems = [
   { label: "Latest Drops", path: "/vault/latest-drops", icon: Zap },
   { label: "Knowledge", path: "/vault/knowledge", icon: BookOpen },
-  { label: "Tools", path: "/vault/tools", icon: Wand2 },
+  { label: "Nightmare Generator", path: "/vault/tools/nightmare-generator", icon: Wand2 },
   { label: "Archive", path: "/vault/archive", icon: Archive },
 ];
 
