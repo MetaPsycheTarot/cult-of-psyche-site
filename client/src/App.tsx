@@ -4,15 +4,26 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import TopNav from "./components/TopNav";
 import Home from "./pages/Home";
+import CrimsonQuillTales from "./pages/CrimsonQuillTales";
+import CultPsycheHub from "./pages/CultPsycheHub";
+import TempleOfWisdom from "./pages/TempleOfWisdom";
+import OracleChamber from "./pages/OracleChamber";
+import TheBecomingVault from "./pages/TheBecomingVault";
+import PsychePath from "./pages/PsychePath";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/crimson-quill-tales"} component={CrimsonQuillTales} />
+      <Route path={"/cult-psyche-hub"} component={CultPsycheHub} />
+      <Route path={"/temple-of-wisdom"} component={TempleOfWisdom} />
+      <Route path={"/oracle-chamber"} component={OracleChamber} />
+      <Route path={"/the-becoming-vault"} component={TheBecomingVault} />
+      <Route path={"/psyche-path"} component={PsychePath} />
       <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );
@@ -26,12 +37,10 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster />
+          <TopNav />
           <Router />
         </TooltipProvider>
       </ThemeProvider>
