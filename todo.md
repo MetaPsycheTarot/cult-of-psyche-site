@@ -23,10 +23,10 @@
 
 ## PRIORITY 4: Tools Expansion
 
-- [ ] Nightmare Generator (already built ✅)
-- [ ] Create /vault/tools hub page
-- [ ] Add Tarot Pull tool
-- [ ] Add Prompt Generator tool
+- [x] Nightmare Generator (already built ✅)
+- [x] Create /vault/tools hub page
+- [x] Add Tarot Pull tool (coming soon)
+- [x] Add Prompt Generator tool (coming soon)
 
 ## COMPLETED FEATURES
 

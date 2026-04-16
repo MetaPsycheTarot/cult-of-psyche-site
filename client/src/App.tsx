@@ -26,6 +26,7 @@ import VaultLatestDrops from "./pages/vault/VaultLatestDrops";
 import NightmareGenerator from "./pages/vault/NightmareGenerator";
 import VaultContent from "./pages/vault/VaultContent";
 import VaultTarot from "./pages/vault/VaultTarot";
+import VaultTools from "./pages/vault/VaultTools";
 
 function Router() {
   const { isAuthenticated, loading } = useAuth();
@@ -59,6 +60,7 @@ function Router() {
           <Route path={"/vault/latest-drops"} component={VaultLatestDrops} />
           <Route path={"/vault/content"} component={VaultContent} />
           <Route path={"/vault/tarot"} component={VaultTarot} />
+          <Route path={"/vault/tools"} component={VaultTools} />
           <Route path={"/vault/tools/nightmare-generator"} component={NightmareGenerator} />
         </>
       )}
