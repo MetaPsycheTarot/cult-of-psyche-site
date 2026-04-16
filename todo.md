@@ -34,3 +34,15 @@
 - [x] YouTube livestream integration
 - [x] Nightmare Generator with LLM
 - [x] Vault sidebar navigation
+
+
+## PHASE 2: Tools Implementation
+
+- [x] Prompt Generator tool (/vault/tools/prompt-generator)
+  - [x] Backend LLM integration for prompt generation
+  - [x] Frontend UI with category selection
+  - [x] TikTok prompts
+  - [x] Stream Ideas prompts
+  - [x] Horror Stories prompts
+  - [x] Copy to clipboard functionality
+  - [x] Prompt history/bookmarks (localStorage)

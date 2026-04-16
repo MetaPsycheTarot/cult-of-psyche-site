@@ -28,7 +28,7 @@ const tools: Tool[] = [
     description: "Draw from the Psyche Awakens deck. One card, three cards, or full spreads with AI interpretation.",
     emoji: "🃏",
     path: "/vault/tools/tarot-pull",
-    status: "coming-soon",
+    status: "active",
   },
   {
     id: "prompt-generator",
@@ -36,7 +36,7 @@ const tools: Tool[] = [
     description: "Generate creative prompts for writing, streaming, or rituals. TikTok, stream ideas, horror stories.",
     emoji: "✍️",
     path: "/vault/tools/prompt-generator",
-    status: "coming-soon",
+    status: "active",
   },
 ];
 
@@ -92,27 +92,27 @@ export default function VaultTools() {
                           {tool.name}
                         </h3>
                         {tool.status === "coming-soon" && (
-                          <span
-                            className="text-xs font-bold px-3 py-1 rounded"
-                            style={{
-                              background: "rgba(255, 215, 0, 0.2)",
-                              color: "#FFD700",
-                            }}
-                          >
-                            Coming Soon
-                          </span>
-                        )}
-                        {tool.status === "active" && (
-                          <span
-                            className="text-xs font-bold px-3 py-1 rounded"
-                            style={{
-                              background: "rgba(0, 217, 255, 0.2)",
-                              color: "var(--color-cyan)",
-                            }}
-                          >
-                            Active
-                          </span>
-                        )}
+                        <span
+                          className="text-xs font-bold px-3 py-1 rounded"
+                          style={{
+                            background: "rgba(255, 215, 0, 0.2)",
+                            color: "#FFD700",
+                          }}
+                        >
+                          Coming Soon
+                        </span>
+                      )}
+                      {tool.status === "active" && (
+                        <span
+                          className="text-xs font-bold px-3 py-1 rounded"
+                          style={{
+                            background: "rgba(0, 217, 255, 0.2)",
+                            color: "var(--color-cyan)",
+                          }}
+                        >
+                          Active
+                        </span>
+                      )}
                       </div>
                       <p style={{ color: "var(--color-text-secondary)" }}>{tool.description}</p>
                     </div>

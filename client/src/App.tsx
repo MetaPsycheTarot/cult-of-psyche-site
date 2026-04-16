@@ -27,6 +27,7 @@ import NightmareGenerator from "./pages/vault/NightmareGenerator";
 import VaultContent from "./pages/vault/VaultContent";
 import VaultTarot from "./pages/vault/VaultTarot";
 import VaultTools from "./pages/vault/VaultTools";
+import PromptGenerator from "./pages/vault/PromptGenerator";
 
 function Router() {
   const { isAuthenticated, loading } = useAuth();
@@ -62,6 +63,7 @@ function Router() {
           <Route path={"/vault/tarot"} component={VaultTarot} />
           <Route path={"/vault/tools"} component={VaultTools} />
           <Route path={"/vault/tools/nightmare-generator"} component={NightmareGenerator} />
+          <Route path={"/vault/tools/prompt-generator"} component={PromptGenerator} />
         </>
       )}
 
