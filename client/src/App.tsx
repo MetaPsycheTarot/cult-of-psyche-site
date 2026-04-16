@@ -5,34 +5,63 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import TopNav from "./components/TopNav";
+import { useAuth } from "@/_core/hooks/useAuth";
+
+// Public pages
 import Home from "./pages/Home";
-import CrimsonQuillTales from "./pages/CrimsonQuillTales";
-import CultPsycheHub from "./pages/CultPsycheHub";
-import TempleOfWisdom from "./pages/TempleOfWisdom";
-import OracleChamber from "./pages/OracleChamber";
-import TheBecomingVault from "./pages/TheBecomingVault";
-import PsychePath from "./pages/PsychePath";
+import Watch from "./pages/Watch";
+import About from "./pages/About";
+import Join from "./pages/Join";
+import Lore from "./pages/Lore";
+import Clips from "./pages/Clips";
+
+// Auth pages
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+
+// Vault pages (protected)
+import VaultDashboard from "./pages/vault/VaultDashboard";
+import VaultLatestDrops from "./pages/vault/VaultLatestDrops";
 
 function Router() {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--color-midnight)" }}>
+        <div style={{ color: "var(--color-cyan)" }}>Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <Switch>
+      {/* Public Routes */}
       <Route path={"/"} component={Home} />
-      <Route path={"/crimson-quill-tales"} component={CrimsonQuillTales} />
-      <Route path={"/cult-psyche-hub"} component={CultPsycheHub} />
-      <Route path={"/temple-of-wisdom"} component={TempleOfWisdom} />
-      <Route path={"/oracle-chamber"} component={OracleChamber} />
-      <Route path={"/the-becoming-vault"} component={TheBecomingVault} />
-      <Route path={"/psyche-path"} component={PsychePath} />
+      <Route path={"/watch"} component={Watch} />
+      <Route path={"/about"} component={About} />
+      <Route path={"/join"} component={Join} />
+      <Route path={"/lore"} component={Lore} />
+      <Route path={"/clips"} component={Clips} />
+
+      {/* Auth Routes */}
+      <Route path={"/login"} component={Login} />
+      <Route path={"/signup"} component={Signup} />
+
+      {/* Protected Vault Routes */}
+      {isAuthenticated && (
+        <>
+          <Route path={"/vault"} component={VaultDashboard} />
+          <Route path={"/vault/latest-drops"} component={VaultLatestDrops} />
+        </>
+      )}
+
+      {/* Fallback */}
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
-
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
   return (

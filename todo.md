@@ -1,31 +1,39 @@
-# Cult of Psyche Platform - TODO
+# Cult of Psyche + CultCodex - Phase 1 MVP
 
-## Core Features
+## PUBLIC FUNNEL (PsycheHub)
 
-- [x] Neon-noir aesthetic with CSS variables (midnight navy, hot pink, electric blue, cyan, magenta)
-- [x] Global typography and styling (cinematic, sans-serif headlines with glow effects)
-- [x] Top navigation bar with "Cult of Psyche" brand header
-- [x] Navigation links to all seven apps
-- [x] Authentication state display in nav (login/logout button)
-- [x] Landing page with app grid showcasing all seven apps
-- [x] Responsive layout and design
+- [x] Homepage (/) - Identity + hook + "Enter the Codex" CTA + preview + vault tease
+- [x] Watch (/watch) - YouTube embeds, clips, categories (Panels, Tarot, Chaos)
+- [x] About (/about) - What this is, your role, what CultCodex is
+- [x] Join (/join) - Pricing, benefits, CTA to signup
+- [x] Lore (/lore) - Mythology, cult tone, brand depth
+- [x] Clips (/clips) - Short-form content grid (TikTok-style)
 
-## App Pages
+## AUTH SYSTEM (Shared)
 
-- [x] Crimson Quill Tales - creative writing and storytelling app
-- [x] Cult Psyche Hub - community and dashboard hub app
-- [x] Temple of Wisdom - knowledge and wisdom resource app
-- [x] Oracle Chamber - oracle and divination interactive app
-- [x] The Becoming Vault - personal growth and archive app
-- [x] Psyche Path - guided journey and path app
+- [x] Login page (/login)
+- [x] Signup page (/signup)
+- [x] Dashboard redirect (/dashboard)
+- [x] Google OAuth integration (via Manus OAuth)
 
-## Testing & Delivery
+## VAULT SYSTEM (Behind Login)
 
-- [x] Test all routes and navigation
-- [x] Test authentication flows (login/logout)
-- [x] Verify consistent branding across all pages
-- [x] Save checkpoint and prepare for delivery
+- [x] Vault main dashboard (/vault) - Sidebar + main panel
+- [x] Latest Drops section (1 locked section for MVP)
+- [x] 3 sample pieces of content (exclusive episodes/cuts)
+- [x] Permission system (free vs member via role)
+- [x] Membership badge display (members-only messaging)
 
-## Enhancements
+## STRIPE INTEGRATION
 
-- [x] Add interactive hover animations to app cards on landing page
+- [ ] Webhook endpoint for immediate access
+- [ ] Membership tier setup ($10/mo, $100 lifetime)
+- [ ] Post-purchase access grant
+- [ ] Membership status sync
+
+## TESTING & DEPLOYMENT
+
+- [ ] Test full funnel (public → login → vault)
+- [ ] Test payment flow (Stripe → access)
+- [ ] Verify permission gates
+- [ ] Save checkpoint

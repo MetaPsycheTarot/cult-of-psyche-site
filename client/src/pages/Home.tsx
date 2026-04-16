@@ -1,61 +1,17 @@
-import { ArrowRight } from "lucide-react";
-
-const apps = [
-  {
-    id: 1,
-    name: "Crimson Quill Tales",
-    description: "A creative writing and storytelling app where imagination meets the written word.",
-    path: "/crimson-quill-tales",
-    icon: "✍️",
-    color: "from-hot-pink to-magenta",
-  },
-  {
-    id: 2,
-    name: "Cult Psyche Hub",
-    description: "A community and dashboard hub for connection, collaboration, and collective growth.",
-    path: "/cult-psyche-hub",
-    icon: "🌐",
-    color: "from-cyan to-electric-blue",
-  },
-  {
-    id: 3,
-    name: "Temple of Wisdom",
-    description: "A knowledge and wisdom resource app for enlightenment and understanding.",
-    path: "/temple-of-wisdom",
-    icon: "🏛️",
-    color: "from-magenta to-hot-pink",
-  },
-  {
-    id: 4,
-    name: "Oracle Chamber",
-    description: "An oracle and divination interactive app for insight and prophecy.",
-    path: "/oracle-chamber",
-    icon: "🔮",
-    color: "from-electric-blue to-cyan",
-  },
-  {
-    id: 5,
-    name: "The Becoming Vault",
-    description: "A personal growth and archive app for transformation and remembrance.",
-    path: "/the-becoming-vault",
-    icon: "🗝️",
-    color: "from-hot-pink to-electric-blue",
-  },
-  {
-    id: 6,
-    name: "Psyche Path",
-    description: "A guided journey and path app for self-discovery and spiritual exploration.",
-    path: "/psyche-path",
-    icon: "🛤️",
-    color: "from-cyan to-magenta",
-  },
-];
+import { Button } from "@/components/ui/button";
+import { useLocation } from "wouter";
+import { YouTubeEmbed } from "@/components/YouTubeEmbed";
+import { MembershipBanner } from "@/components/MembershipBanner";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 export default function Home() {
+  const [, navigate] = useLocation();
+  const { isAuthenticated } = useAuth();
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ background: "var(--color-midnight)" }}>
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 px-4 overflow-hidden">
+      <section className="relative py-24 md:py-32 px-4 overflow-hidden">
         {/* Accent lines */}
         <div
           className="absolute left-0 top-0 bottom-0 w-1 opacity-50"
@@ -71,99 +27,150 @@ export default function Home() {
         ></div>
 
         <div className="container max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-pulse-glow" style={{ color: "var(--color-hot-pink)" }}>
-            CULT OF PSYCHE
+          <h1 className="text-6xl md:text-7xl font-bold mb-6" style={{ color: "var(--color-hot-pink)" }}>
+            Enter the Codex.
           </h1>
+          <p className="text-2xl mb-8" style={{ color: "var(--color-cyan)" }}>
+            Content was never the point. This is a system.
+          </p>
+
           <div
-            className="h-1 w-32 mx-auto mb-8"
+            className="h-1 w-32 mx-auto mb-12"
             style={{
               background: "linear-gradient(to right, var(--color-cyan), var(--color-magenta), transparent)",
             }}
           ></div>
-          <p className="text-xl md:text-2xl mb-8 leading-relaxed max-w-2xl mx-auto" style={{ color: "var(--color-text-secondary)" }}>
-            Welcome to the central hub of mystical experiences. Explore six transformative apps designed to awaken your consciousness and expand your understanding of the psyche.
+
+          <p className="text-lg leading-relaxed mb-12 max-w-2xl mx-auto" style={{ color: "var(--color-text-secondary)" }}>
+            You've seen the streams. The chaos. The panels. The readings. What you haven't seen is what's behind it.
           </p>
-          <div
-            className="h-1 w-32 mx-auto"
+
+          <button
+            onClick={() => navigate(isAuthenticated ? "/vault" : "/join")}
+            className="px-8 py-4 rounded-lg font-bold text-lg transition-all hover:scale-105"
             style={{
-              background: "linear-gradient(to right, transparent, var(--color-magenta), var(--color-cyan))",
+              background: "var(--color-hot-pink)",
+              color: "var(--color-midnight)",
             }}
-          ></div>
+          >
+            {isAuthenticated ? "Enter the Vault" : "Enter the Codex"}
+          </button>
         </div>
       </section>
 
-      {/* Apps Grid */}
+      {/* Membership Banner */}
+      <section className="py-8 px-4">
+        <div className="container max-w-4xl">
+          <MembershipBanner showName="Psyche's Nightmares" ctaUrl="https://cultcodex.me" />
+        </div>
+      </section>
+
+      {/* YouTube Livestream Section */}
+      <section className="py-16 px-4">
+        <div className="container max-w-4xl">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
+              Watch the Latest
+            </h2>
+            <p style={{ color: "var(--color-text-secondary)" }}>
+              Tune into Psyche's Nightmares livestreams for exclusive content, rituals, and occult wisdom.
+            </p>
+          </div>
+          <YouTubeEmbed className="h-96 md:h-screen-1/2" />
+        </div>
+      </section>
+
+      {/* Preview Section */}
       <section className="py-20 px-4">
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {apps.map((app, index) => (
-              <div key={app.id} className="group relative" style={{ animationDelay: `${index * 100}ms` }}>
-                {/* Card */}
-                <a href={app.path} className="card-neon card-hover-animated flex flex-col h-full">
-                  {/* Icon */}
-                  <div className="card-icon text-5xl mb-4 transition-transform duration-300">{app.icon}</div>
+        <div className="container max-w-4xl">
+          <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: "var(--color-hot-pink)" }}>
+            What You Get Inside
+          </h2>
 
-                  {/* Title */}
-                  <h3 className="card-title text-xl font-bold mb-3 transition-all duration-300" style={{ color: "var(--color-hot-pink)" }}>
-                    {app.name}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-sm mb-6 flex-grow" style={{ color: "var(--color-text-secondary)" }}>
-                    {app.description}
-                  </p>
-
-                  {/* CTA */}
-                  <div className="card-cta flex items-center gap-2 transition-all duration-300" style={{ color: "var(--color-cyan)" }}>
-                    <span className="font-semibold">Explore</span>
-                    <ArrowRight size={18} className="transition-transform duration-300" />
-                  </div>
-                </a>
-
-                {/* Glow effect on hover */}
-                <div
-                  className="absolute inset-0 rounded-lg transition-all duration-300 pointer-events-none"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(255, 20, 147, 0.05), rgba(217, 70, 239, 0.03), rgba(0, 217, 255, 0.05))",
-                  }}
-                ></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {[
+              {
+                title: "Exclusive Content",
+                description: "Full episodes, extended cuts, and uncensored segments.",
+                icon: "🎥",
+              },
+              {
+                title: "Tarot System",
+                description: "Psyche Awakens deck with readings and interpretations.",
+                icon: "🃏",
+              },
+              {
+                title: "Tools & Generators",
+                description: "Nightmare generator, tarot pulls, and prompt tools.",
+                icon: "🧰",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="p-6 rounded-lg border-2 text-center"
+                style={{
+                  background: "rgba(0, 217, 255, 0.05)",
+                  borderColor: "var(--color-cyan)",
+                }}
+              >
+                <div className="text-4xl mb-4">{item.icon}</div>
+                <h3 className="text-xl font-bold mb-2" style={{ color: "var(--color-hot-pink)" }}>
+                  {item.title}
+                </h3>
+                <p style={{ color: "var(--color-text-secondary)" }}>{item.description}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Call to Action Section */}
-      <section className="py-20 px-4 border-t border-cyan/30">
-        <div className="container max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Begin Your Journey</h2>
-          <p className="text-text-secondary text-lg mb-8" style={{ color: "var(--color-text-secondary)" }}>
-            Each app within the Cult of Psyche offers unique pathways to self-discovery and transformation. Choose your first destination and unlock the mysteries that await.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/crimson-quill-tales" className="btn-neon">
-              Start Exploring
-            </a>
-            <a
-              href="#"
-              className="px-6 py-3 font-bold uppercase tracking-widest rounded-lg border-2 transition-all duration-300"
-              style={{ borderColor: "var(--color-cyan)", color: "var(--color-cyan)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0, 217, 255, 0.1)")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+          {/* Vault Tease */}
+          <div
+            className="p-12 rounded-lg border-2 text-center"
+            style={{
+              background: "linear-gradient(135deg, rgba(255, 20, 147, 0.1), rgba(0, 217, 255, 0.1))",
+              borderColor: "var(--color-hot-pink)",
+            }}
+          >
+            <h3 className="text-2xl font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
+              Not a channel. Not a community. A living system.
+            </h3>
+            <p className="mb-6" style={{ color: "var(--color-text-secondary)" }}>
+              The vault is where the real work happens. Where members go to deepen their understanding and participation in the system.
+            </p>
+            <button
+              onClick={() => navigate(isAuthenticated ? "/vault" : "/join")}
+              className="px-8 py-3 rounded-lg font-bold transition-all hover:scale-105"
+              style={{
+                background: "var(--color-cyan)",
+                color: "var(--color-midnight)",
+              }}
             >
-              Learn More
-            </a>
+              Explore the System
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Footer Accent */}
-      <div
-        className="h-1 w-full"
-        style={{
-          background: "linear-gradient(to right, var(--color-cyan), var(--color-magenta), transparent)",
-        }}
-      ></div>
+      {/* CTA Footer */}
+      <section className="py-20 px-4 border-t" style={{ borderTopColor: "rgba(0, 217, 255, 0.2)" }}>
+        <div className="container max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold mb-6" style={{ color: "var(--color-hot-pink)" }}>
+            You Didn't Find Us. We Found You.
+          </h2>
+          <p className="text-lg mb-8" style={{ color: "var(--color-text-secondary)" }}>
+            The system is waiting. Are you ready to go deeper?
+          </p>
+          <button
+            onClick={() => navigate(isAuthenticated ? "/vault" : "/join")}
+            className="px-8 py-4 rounded-lg font-bold text-lg transition-all hover:scale-105"
+            style={{
+              background: "var(--color-hot-pink)",
+              color: "var(--color-midnight)",
+            }}
+          >
+            {isAuthenticated ? "Go to Vault" : "Join Now"}
+          </button>
+        </div>
+      </section>
     </div>
   );
 }
