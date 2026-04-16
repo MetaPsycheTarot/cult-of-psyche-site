@@ -25,3 +25,7 @@
 - [x] Test authentication flows (login/logout)
 - [x] Verify consistent branding across all pages
 - [x] Save checkpoint and prepare for delivery
+
+## Enhancements
+
+- [x] Add interactive hover animations to app cards on landing page

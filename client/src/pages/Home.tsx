@@ -99,12 +99,12 @@ export default function Home() {
             {apps.map((app, index) => (
               <div key={app.id} className="group relative" style={{ animationDelay: `${index * 100}ms` }}>
                 {/* Card */}
-                <a href={app.path} className="card-neon flex flex-col h-full hover:shadow-neon-pink">
+                <a href={app.path} className="card-neon card-hover-animated flex flex-col h-full">
                   {/* Icon */}
-                  <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">{app.icon}</div>
+                  <div className="card-icon text-5xl mb-4 transition-transform duration-300">{app.icon}</div>
 
                   {/* Title */}
-                  <h3 className="text-xl font-bold mb-3 group-hover:transition-colors group-hover:duration-300" style={{ color: "var(--color-hot-pink)" }}>
+                  <h3 className="card-title text-xl font-bold mb-3 transition-all duration-300" style={{ color: "var(--color-hot-pink)" }}>
                     {app.name}
                   </h3>
 
@@ -114,14 +114,19 @@ export default function Home() {
                   </p>
 
                   {/* CTA */}
-                  <div className="flex items-center gap-2 transition-colors duration-300" style={{ color: "var(--color-cyan)" }}>
+                  <div className="card-cta flex items-center gap-2 transition-all duration-300" style={{ color: "var(--color-cyan)" }}>
                     <span className="font-semibold">Explore</span>
-                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-300" />
+                    <ArrowRight size={18} className="transition-transform duration-300" />
                   </div>
                 </a>
 
                 {/* Glow effect on hover */}
-                <div className="absolute inset-0 rounded-lg group-hover:from-hot-pink/10 group-hover:via-magenta/5 group-hover:to-cyan/10 transition-all duration-300 pointer-events-none"></div>
+                <div
+                  className="absolute inset-0 rounded-lg transition-all duration-300 pointer-events-none"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(255, 20, 147, 0.05), rgba(217, 70, 239, 0.03), rgba(0, 217, 255, 0.05))",
+                  }}
+                ></div>
               </div>
             ))}
           </div>
