@@ -1,12 +1,12 @@
 import { useLocation } from "wouter";
-import { Zap, BookOpen, Wand2, Archive, LogOut } from "lucide-react";
+import { Zap, Film, Wand2, Archive, LogOut, Sparkles } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 
 const navItems = [
   { label: "Latest Drops", path: "/vault/latest-drops", icon: Zap },
-  { label: "Knowledge", path: "/vault/knowledge", icon: BookOpen },
-  { label: "Nightmare Generator", path: "/vault/tools/nightmare-generator", icon: Wand2 },
+  { label: "Content", path: "/vault/content", icon: Film },
+  { label: "Tarot", path: "/vault/tarot", icon: Sparkles },
   { label: "Archive", path: "/vault/archive", icon: Archive },
 ];
 

@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import TopNav from "./components/TopNav";
+import { Footer } from "./components/Footer";
 import { useAuth } from "@/_core/hooks/useAuth";
 
 // Public pages
@@ -23,6 +24,8 @@ import Signup from "./pages/Signup";
 import VaultDashboard from "./pages/vault/VaultDashboard";
 import VaultLatestDrops from "./pages/vault/VaultLatestDrops";
 import NightmareGenerator from "./pages/vault/NightmareGenerator";
+import VaultContent from "./pages/vault/VaultContent";
+import VaultTarot from "./pages/vault/VaultTarot";
 
 function Router() {
   const { isAuthenticated, loading } = useAuth();
@@ -54,6 +57,8 @@ function Router() {
         <>
           <Route path={"/vault"} component={VaultDashboard} />
           <Route path={"/vault/latest-drops"} component={VaultLatestDrops} />
+          <Route path={"/vault/content"} component={VaultContent} />
+          <Route path={"/vault/tarot"} component={VaultTarot} />
           <Route path={"/vault/tools/nightmare-generator"} component={NightmareGenerator} />
         </>
       )}
@@ -73,6 +78,7 @@ function App() {
           <Toaster />
           <TopNav />
           <Router />
+          <Footer />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

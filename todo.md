@@ -1,47 +1,36 @@
-# Cult of Psyche + CultCodex - Phase 1 MVP
+# Cult of Psyche + CultCodex - Structured Build Plan
 
-## PUBLIC FUNNEL (PsycheHub)
+## PRIORITY 1: Global Layout Fix
 
-- [x] Homepage (/) - Identity + hook + "Enter the Codex" CTA + preview + vault tease
-- [x] Watch (/watch) - YouTube embeds, clips, categories (Panels, Tarot, Chaos)
-- [x] About (/about) - What this is, your role, what CultCodex is
-- [x] Join (/join) - Pricing, benefits, CTA to signup
-- [x] Lore (/lore) - Mythology, cult tone, brand depth
-- [x] Clips (/clips) - Short-form content grid (TikTok-style)
+- [x] Update top navigation: Logo (left) | Watch | Clips | Lore | Join | Profile/Login (right)
+- [x] Add footer with links and "Powered by CultCodex" branding
+- [x] Standardize page container width and spacing
+- [x] Apply consistent layout to all pages
 
-## AUTH SYSTEM (Shared)
+## PRIORITY 2: /vault/content (Monetization Surface)
 
-- [x] Login page (/login)
-- [x] Signup page (/signup)
-- [x] Dashboard redirect (/dashboard)
-- [x] Google OAuth integration (via Manus OAuth)
+- [x] Create /vault/content page with filter bar (Exclusive | Full Episodes | Removed Scenes)
+- [x] Build content grid with locked/unlocked card states
+- [x] Add 5 sample exclusive content items
+- [x] Implement access control (free vs member via role check)
 
-## VAULT SYSTEM (Behind Login)
+## PRIORITY 3: Tarot System
 
-- [x] Vault main dashboard (/vault) - Sidebar + main panel
-- [x] Latest Drops section (1 locked section for MVP)
-- [x] 3 sample pieces of content (exclusive episodes/cuts)
-- [x] Permission system (free vs member via role)
-- [x] Membership badge display (members-only messaging)
+- [x] Create /vault/tarot page with card grid
+- [x] Build card detail view (image, meaning, interpretation, notes)
+- [x] Add static Psyche Awakens deck meanings (8 cards)
+- [x] Implement card click → detail panel
 
-## STRIPE INTEGRATION
+## PRIORITY 4: Tools Expansion
 
-- [x] Webhook endpoint for immediate access (server/webhooks.ts)
-- [x] Membership tier setup ($10/mo, $100 lifetime) - configured in Join page
-- [x] Post-purchase access grant (webhook handler)
-- [x] Membership status sync (via user role)
+- [ ] Nightmare Generator (already built ✅)
+- [ ] Create /vault/tools hub page
+- [ ] Add Tarot Pull tool
+- [ ] Add Prompt Generator tool
 
-## TESTING & DEPLOYMENT
+## COMPLETED FEATURES
 
-- [x] Test full funnel (public → login → vault)
-- [x] Test permission gates (member-only content)
-- [x] Verify auth system
-- [x] Save checkpoint
-
-## Phase 2: Vault Tools
-
-- [x] Nightmare Generator tool (/vault/tools/nightmare-generator)
-  - [x] Backend LLM integration for nightmare generation
-  - [x] Frontend UI with dark aesthetic
-  - [x] Save/bookmark generated nightmares (localStorage)
-  - [x] Nightmare history/archive (bookmarks section)
+- [x] Phase 1 MVP: Public funnel, auth system, basic vault
+- [x] YouTube livestream integration
+- [x] Nightmare Generator with LLM
+- [x] Vault sidebar navigation
