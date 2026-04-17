@@ -33,6 +33,9 @@ import TarotPull from "./pages/vault/TarotPull";
 import VaultLore from "./pages/vault/VaultLore";
 import VaultGallery from "./pages/vault/VaultGallery";
 import VaultArchive from "./pages/vault/VaultArchive";
+import UserProfile from "./pages/UserProfile";
+import CommunityForum from "./pages/CommunityForum";
+import Leaderboard from "./pages/Leaderboard";
 
 function Router() {
   const { isAuthenticated, loading } = useAuth();
@@ -60,9 +63,12 @@ function Router() {
       <Route path={"/signup"} component={Signup} />
       <Route path={"/success"} component={Success} />
 
-      {/* Protected Vault Routes */}
+      {/* Protected Routes */}
       {isAuthenticated && (
         <>
+          <Route path={"/profile"} component={UserProfile} />
+          <Route path={"/forum"} component={CommunityForum} />
+          <Route path={"/leaderboard"} component={Leaderboard} />
           <Route path={"/vault"} component={VaultDashboard} />
           <Route path={"/vault/latest-drops"} component={VaultLatestDrops} />
           <Route path={"/vault/content"} component={VaultContent} />

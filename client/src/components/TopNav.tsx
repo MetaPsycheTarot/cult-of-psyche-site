@@ -63,6 +63,17 @@ export default function TopNav() {
             {isAuthenticated ? (
               <div className="hidden sm:flex items-center gap-3">
                 <span className="text-sm" style={{ color: "rgba(0, 217, 255, 0.8)" }}>{user?.name || "User"}</span>
+                <a
+                  href="/profile"
+                  className="text-xs px-3 py-2 rounded-lg transition-all"
+                  style={{
+                    color: location === "/profile" ? "var(--color-hot-pink)" : "var(--color-text-secondary)",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-cyan)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = location === "/profile" ? "var(--color-hot-pink)" : "var(--color-text-secondary)")}
+                >
+                  Profile
+                </a>
                 <button
                   onClick={handleLogout}
                   className="btn-neon text-xs"
