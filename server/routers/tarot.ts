@@ -81,13 +81,21 @@ export const tarotRouter = router({
 
   // Get all cards
   getAllCards: protectedProcedure.query(() => {
-    return TAROT_DECK;
+    return TAROT_DECK.map((card) => ({
+      ...card,
+      imageUrl: getCardImageUrl(card.name.toLowerCase().replace(/\s+/g, "-")),
+    }));
   }),
 
   // Get card by ID
   getCardById: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(({ input }) => {
-      return TAROT_DECK.find((card) => card.id === input.id);
+      const card = TAROT_DECK.find((card) => card.id === input.id);
+      if (!card) return null;
+      return {
+        ...card,
+        imageUrl: getCardImageUrl(card.name.toLowerCase().replace(/\s+/g, "-")),
+      };
     }),
 });

@@ -3,112 +3,40 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 interface TarotCard {
   id: number;
   name: string;
-  arcana: "major" | "minor";
-  suit?: "cups" | "wands" | "swords" | "pentacles";
-  number?: number;
-  emoji: string;
+  suit: "major" | "wands" | "cups" | "swords" | "pentacles";
+  number: number;
   meaning: string;
   interpretation: string;
-  reversed?: string;
+  imageUrl?: string;
 }
-
-const psycheAwakensCards: TarotCard[] = [
-  {
-    id: 1,
-    name: "The Awakening",
-    arcana: "major",
-    emoji: "✨",
-    meaning: "Consciousness emerging from the void",
-    interpretation:
-      "The moment awareness breaks through the veil. You are beginning to see what was always hidden. This is the first step of the journey.",
-    reversed: "Denial of truth. Resistance to awakening.",
-  },
-  {
-    id: 2,
-    name: "The Descent",
-    arcana: "major",
-    emoji: "🌑",
-    meaning: "Journey into the depths of self",
-    interpretation:
-      "You must go deeper to understand. The answers lie in the shadow. This is not a journey of comfort, but of truth.",
-    reversed: "Avoidance of inner work. Surface-level understanding.",
-  },
-  {
-    id: 3,
-    name: "The Mirror",
-    arcana: "major",
-    emoji: "🪞",
-    meaning: "Reflection of what is real",
-    interpretation:
-      "You see yourself as you truly are. All illusions fall away. This is both terrifying and liberating.",
-    reversed: "Self-deception. Distorted self-image.",
-  },
-  {
-    id: 4,
-    name: "The Void",
-    arcana: "major",
-    emoji: "⚫",
-    meaning: "Emptiness and infinite potential",
-    interpretation:
-      "In the void, all things are possible. You stand at the threshold between what was and what will be. Surrender to the unknown.",
-    reversed: "Fear of emptiness. Clinging to the familiar.",
-  },
-  {
-    id: 5,
-    name: "The Serpent",
-    arcana: "major",
-    emoji: "🐍",
-    meaning: "Transformation and shedding",
-    interpretation:
-      "You are shedding your old skin. What you were is dying so that what you will become can be born. Embrace the metamorphosis.",
-    reversed: "Resistance to change. Stagnation.",
-  },
-  {
-    id: 6,
-    name: "The Architect",
-    arcana: "major",
-    emoji: "🏗️",
-    meaning: "Builder of reality",
-    interpretation:
-      "You have the power to construct your own reality. Every thought is a blueprint. Every action is a building block. Create consciously.",
-    reversed: "Powerlessness. Victim mentality.",
-  },
-  {
-    id: 7,
-    name: "The Threshold",
-    arcana: "major",
-    emoji: "🚪",
-    meaning: "Passage between worlds",
-    interpretation:
-      "You stand at the boundary. The old world is behind you. The new world awaits. Choose whether to cross.",
-    reversed: "Hesitation. Inability to commit.",
-  },
-  {
-    id: 8,
-    name: "The Chorus",
-    arcana: "major",
-    emoji: "👥",
-    meaning: "Collective consciousness",
-    interpretation:
-      "You are not alone. You are part of something greater. The voices of many speak through you. Listen to the collective wisdom.",
-    reversed: "Isolation. Disconnection from others.",
-  },
-];
 
 export default function VaultTarot() {
   const { isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
   const [selectedCard, setSelectedCard] = useState<TarotCard | null>(null);
+  const [suitFilter, setSuitFilter] = useState<"all" | "major" | "wands" | "cups" | "swords" | "pentacles">("all");
+
+  // Fetch all cards from backend
+  const { data: allCards = [] } = trpc.tarot.getAllCards.useQuery();
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
     }
   }, [isAuthenticated, navigate]);
+
+  // Filter cards by suit
+  const filteredCards = suitFilter === "all" ? allCards : allCards.filter((card) => card.suit === suitFilter);
+
+  const getSuitLabel = (suit: string) => {
+    if (suit === "major") return "Major Arcana";
+    return suit.charAt(0).toUpperCase() + suit.slice(1) + " Suit";
+  };
 
   return (
     <div className="flex min-h-screen" style={{ background: "var(--color-midnight)" }}>
@@ -119,13 +47,31 @@ export default function VaultTarot() {
           <h1 className="text-5xl font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
             🃏 Psyche Awakens Tarot
           </h1>
-          <p className="text-lg mb-12" style={{ color: "var(--color-text-secondary)" }}>
-            The deck of awakening. Each card holds a key to understanding the self.
+          <p className="text-lg mb-8" style={{ color: "var(--color-text-secondary)" }}>
+            The complete 78-card deck of awakening. Each card holds a key to understanding the self.
           </p>
+
+          {/* Suit Filter */}
+          <div className="flex gap-2 mb-8 flex-wrap">
+            {(["all", "major", "wands", "cups", "swords", "pentacles"] as const).map((suit) => (
+              <button
+                key={suit}
+                onClick={() => setSuitFilter(suit)}
+                className="px-4 py-2 rounded-lg font-semibold transition-all capitalize"
+                style={{
+                  background: suitFilter === suit ? "var(--color-hot-pink)" : "rgba(0, 217, 255, 0.1)",
+                  color: suitFilter === suit ? "var(--color-midnight)" : "var(--color-cyan)",
+                  border: suitFilter === suit ? "none" : "2px solid var(--color-cyan)",
+                }}
+              >
+                {suit === "all" ? "All Cards" : suit}
+              </button>
+            ))}
+          </div>
 
           {/* Card Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {psycheAwakensCards.map((card) => (
+            {filteredCards.map((card) => (
               <button
                 key={card.id}
                 onClick={() => setSelectedCard(card)}
@@ -136,20 +82,27 @@ export default function VaultTarot() {
                 }}
               >
                 <div
-                  className="aspect-square flex flex-col items-center justify-center p-4 text-center"
+                  className="aspect-square flex flex-col items-center justify-center p-4 text-center relative overflow-hidden"
                   style={{
                     background: "linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 20, 147, 0.1))",
                   }}
                 >
-                  <div className="text-5xl mb-2 group-hover:scale-125 transition-transform">{card.emoji}</div>
-                  <h3
-                    className="text-sm font-bold group-hover:text-base transition-all"
-                    style={{ color: "var(--color-hot-pink)" }}
-                  >
+                  {card.imageUrl ? (
+                    <img
+                      src={card.imageUrl}
+                      alt={card.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                    />
+                  ) : (
+                    <div className="text-5xl mb-2 group-hover:scale-125 transition-transform">🃏</div>
+                  )}
+                </div>
+                <div className="p-3 text-center" style={{ background: "rgba(0, 0, 0, 0.3)" }}>
+                  <h3 className="text-xs font-bold line-clamp-2" style={{ color: "var(--color-hot-pink)" }}>
                     {card.name}
                   </h3>
-                  <p className="text-xs mt-2" style={{ color: "var(--color-text-secondary)" }}>
-                    {card.arcana === "major" ? "Major" : "Minor"}
+                  <p className="text-xs mt-1" style={{ color: "var(--color-text-secondary)" }}>
+                    {card.suit === "major" ? "Major" : card.suit.charAt(0).toUpperCase() + card.suit.slice(1)}
                   </p>
                 </div>
               </button>
@@ -182,12 +135,21 @@ export default function VaultTarot() {
                 </button>
 
                 <div className="text-center mb-8">
-                  <div className="text-7xl mb-4">{selectedCard.emoji}</div>
+                  {selectedCard.imageUrl && (
+                    <img
+                      src={selectedCard.imageUrl}
+                      alt={selectedCard.name}
+                      className="w-full h-64 object-cover rounded-lg mb-4"
+                    />
+                  )}
                   <h2 className="text-4xl font-bold mb-2" style={{ color: "var(--color-hot-pink)" }}>
                     {selectedCard.name}
                   </h2>
                   <p style={{ color: "var(--color-cyan)" }} className="font-semibold">
-                    {selectedCard.arcana === "major" ? "Major Arcana" : "Minor Arcana"}
+                    {getSuitLabel(selectedCard.suit)}
+                  </p>
+                  <p className="text-sm mt-2" style={{ color: "var(--color-text-secondary)" }}>
+                    Card #{selectedCard.number}
                   </p>
                 </div>
 
@@ -205,15 +167,6 @@ export default function VaultTarot() {
                     </h3>
                     <p style={{ color: "var(--color-text-secondary)" }}>{selectedCard.interpretation}</p>
                   </div>
-
-                  {selectedCard.reversed && (
-                    <div>
-                      <h3 className="text-lg font-bold mb-2" style={{ color: "var(--color-hot-pink)" }}>
-                        Reversed
-                      </h3>
-                      <p style={{ color: "var(--color-text-secondary)" }}>{selectedCard.reversed}</p>
-                    </div>
-                  )}
 
                   <div className="pt-4 border-t" style={{ borderTopColor: "rgba(0, 217, 255, 0.2)" }}>
                     <textarea

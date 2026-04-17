@@ -81,11 +81,11 @@
 
 ## TAROT CARD IMAGERY
 
-- [ ] Generate 8 Psyche Awakens tarot card images
-- [ ] Upload card images to S3 via manus-upload-file
-- [ ] Update tarot deck data with image URLs
-- [ ] Render card images in /vault/tools/tarot-pull UI
-- [ ] Add card image display to card grid and detail views
+- [x] Generate 78 Psyche Awakens tarot card images (all 78 cards generated with neon-noir aesthetic)
+- [x] Upload card images to CDN via manus-upload-file
+- [x] Update tarot deck data with image URLs (via tarotCardImages.ts mapping)
+- [x] Render card images in /vault/tools/tarot-pull UI (integrated with imageUrl display)
+- [x] Add card image display to card grid and detail views (card grid updated)
 
 
 ## 78-CARD TAROT DECK EXPANSION
