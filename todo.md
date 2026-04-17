@@ -224,4 +224,4 @@
 - [x] Implement save/bookmark readings functionality
 - [x] Add guidance prompts for reading interpretation
 - [x] Add reading statistics and insights (card count, spread type)
-- [ ] Create visual card animations for pulls (enhancement)
+- [x] Create visual card animations for pulls (card flip + reveal animations with staggered timing)

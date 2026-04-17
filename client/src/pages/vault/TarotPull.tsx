@@ -41,8 +41,65 @@ export default function TarotPull() {
   const [readingNotes, setReadingNotes] = useState("");
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [showInterpretationGuide, setShowInterpretationGuide] = useState(false);
+  const [animatingCards, setAnimatingCards] = useState<Set<number>>(new Set());
 
   const pullMutation = trpc.tarot.pull.useMutation();
+
+  // Add animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes cardFlip {
+        0% {
+          transform: rotateY(0deg) scale(0.8);
+          opacity: 0;
+        }
+        50% {
+          transform: rotateY(90deg);
+        }
+        100% {
+          transform: rotateY(0deg) scale(1);
+          opacity: 1;
+        }
+      }
+      @keyframes cardReveal {
+        0% {
+          transform: translateY(20px) scale(0.95);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+      .card-flip {
+        animation: cardFlip 0.6s ease-in-out forwards;
+        perspective: 1000px;
+      }
+      .card-reveal {
+        animation: cardReveal 0.5s ease-out forwards;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
+
+  // Trigger card animations when reading is loaded
+  useEffect(() => {
+    if (reading && reading.cards.length > 0) {
+      const newAnimatingCards = new Set<number>();
+      reading.cards.forEach((_, idx) => {
+        setTimeout(() => {
+          newAnimatingCards.add(idx);
+          setAnimatingCards(new Set(newAnimatingCards));
+        }, idx * 150);
+      });
+    }
+  }, [reading]);
 
   // Load saved readings from localStorage
   useEffect(() => {
@@ -333,7 +390,9 @@ export default function TarotPull() {
                     <button
                       key={card.id}
                       onClick={() => setSelectedCard(selectedCard === idx ? null : idx)}
-                      className="p-4 rounded-lg text-center transition-all cursor-pointer"
+                      className={`p-4 rounded-lg text-center transition-all cursor-pointer ${
+                        animatingCards.has(idx) ? "card-flip" : ""
+                      }`}
                       style={{
                         background: selectedCard === idx ? "rgba(255, 20, 147, 0.2)" : "rgba(255, 20, 147, 0.1)",
                         borderLeft: selectedCard === idx ? "4px solid var(--color-hot-pink)" : "4px solid var(--color-hot-pink)",
