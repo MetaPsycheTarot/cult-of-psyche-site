@@ -12,6 +12,10 @@ const apps = [
   { name: "Join", path: "/join" },
 ];
 
+const externalLinks = [
+  { name: "CultCodex Archive", url: "https://cultcodex.me", external: true },
+];
+
 export default function TopNav() {
   const { user, logout, isAuthenticated } = useAuth();
   const [location] = useLocation();
@@ -54,6 +58,24 @@ export default function TopNav() {
                 onMouseLeave={(e) => (e.currentTarget.style.color = location === app.path ? "var(--color-hot-pink)" : "var(--color-text-secondary)")}
               >
                 {app.name}
+              </a>
+            ))}
+            {/* External Links */}
+            <div className="border-l" style={{ borderColor: "rgba(0, 217, 255, 0.3)" }}></div>
+            {externalLinks.map((link) => (
+              <a
+                key={link.url}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 text-sm font-semibold uppercase tracking-wider transition-all duration-300"
+                style={{
+                  color: "var(--color-text-secondary)",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-cyan)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
+              >
+                {link.name} ↗
               </a>
             ))}
           </div>
@@ -137,6 +159,26 @@ export default function TopNav() {
                 {app.name}
               </a>
             ))}
+            {/* Mobile External Links */}
+            <div className="border-t pt-4 mt-4" style={{ borderColor: "rgba(0, 217, 255, 0.3)" }}>
+              {externalLinks.map((link) => (
+                <a
+                  key={link.url}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-sm font-semibold uppercase tracking-wider transition-all duration-300"
+                  style={{
+                    color: "var(--color-text-secondary)",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-cyan)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
+                >
+                  {link.name} ↗
+                </a>
+              ))}
+            </div>
             <div className="border-t pt-4 mt-4" style={{ borderColor: "rgba(0, 217, 255, 0.3)" }}>
               {isAuthenticated ? (
                 <div className="space-y-3 px-4">

@@ -177,3 +177,39 @@
 - [x] Add safe search-term highlighting that escapes regex special characters
 - [x] Add empty-results UI for forum search when no posts match
 - [ ] Add vitest coverage for forum search filtering and highlighting behavior (deferred - requires jsdom setup)
+
+
+## TESTING & REFINEMENT PHASE
+
+- [ ] Test authentication flow (login, logout, session persistence)
+- [x] Test all vault tools (nightmare generator, tarot, prompts) - Tarot deck working perfectly with 78 cards, filtering, and search
+- [x] Test forum functionality - all 5 categories visible, search working, pinned FAQ post displayed
+- [x] Test user profiles and engagement scoring - profile shows user info, engagement progress bar, and member stats
+- [x] Test leaderboards and rankings - displays top members with engagement scores and category breakdowns
+- [x] Test gallery and archive features - gallery displays 3 fan art pieces, archive shows empty state with filtering and export options
+- [ ] Test responsive design on mobile/tablet
+- [ ] Test cross-browser compatibility
+- [ ] Fix any bugs or UX issues found during testing
+
+## CULTCODEX.ME INTEGRATION
+
+- [ ] Add link to Cult of Psyche Hub from cultcodex.me
+- [ ] Create unified navigation between sites
+- [ ] Sync branding and styling between sites
+- [ ] Add cultcodex.me reference/link in Cult of Psyche Hub
+- [ ] Test cross-site navigation flows
+
+
+## BUGS FOUND DURING TESTING
+
+- [x] Nightmare generator working correctly - generates nightmares with theme/intensity selection
+- [x] Prompt generator working - generates detailed prompts with category selection and bookmarking
+
+
+## CULTCODEX.ME INTEGRATION
+
+- [x] Add cultcodex.me reference/link in Cult of Psyche Hub navigation
+- [x] Create cross-site navigation flows between Cult of Psyche Hub and cultcodex.me
+- [x] Ensure consistent branding and styling across both sites
+- [ ] Add unified authentication/session management (if applicable - deferred)
+- [x] Test cross-site navigation and user flows
