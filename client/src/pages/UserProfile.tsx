@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import { VaultSidebar } from "@/components/VaultSidebar";
-import { Calendar, Zap, BookOpen, Award } from "lucide-react";
+import { Calendar, Zap, BookOpen, Award, MessageSquare, Clock } from "lucide-react";
 
 interface MemberStats {
   totalNightmares: number;
@@ -12,6 +12,16 @@ interface MemberStats {
   lastActive: string;
   membershipTier: "free" | "monthly" | "lifetime";
   engagementScore: number;
+}
+
+interface ForumPost {
+  id: string;
+  title: string;
+  category: string;
+  content: string;
+  timestamp: number;
+  replies: number;
+  userId?: string;
 }
 
 export default function UserProfile() {
@@ -26,6 +36,7 @@ export default function UserProfile() {
     membershipTier: "free",
     engagementScore: 0,
   });
+  const [recentPosts, setRecentPosts] = useState<ForumPost[]>([]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -51,6 +62,14 @@ export default function UserProfile() {
       membershipTier: user?.role === "admin" || user?.role === "user" ? "lifetime" : "free",
       engagementScore,
     });
+
+    // Load recent forum posts
+    const allPosts = JSON.parse(localStorage.getItem("forumPosts") || "[]");
+    const userPosts = allPosts
+      .filter((post: any) => post.userId === user?.id)
+      .sort((a: any, b: any) => b.timestamp - a.timestamp)
+      .slice(0, 5);
+    setRecentPosts(userPosts);
   }, [user]);
 
   if (!isAuthenticated) {
@@ -63,6 +82,17 @@ export default function UserProfile() {
     if (score >= 40) return "Initiate";
     if (score >= 20) return "Seeker";
     return "Novice";
+  };
+
+  const getCategoryColor = (category: string) => {
+    const colors: Record<string, string> = {
+      nightmare: "var(--color-magenta)",
+      ritual: "var(--color-cyan)",
+      general: "var(--color-hot-pink)",
+      help: "#FFD700",
+      support: "#FFD700",
+    };
+    return colors[category] || "var(--color-cyan)";
   };
 
   return (
@@ -236,6 +266,65 @@ export default function UserProfile() {
           </div>
         </div>
 
+        {/* Recent Forum Posts */}
+        {recentPosts.length > 0 && (
+          <div
+            className="rounded-lg border p-6 mb-8"
+            style={{
+              background: "rgba(0, 217, 255, 0.05)",
+              borderColor: "rgba(0, 217, 255, 0.2)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <MessageSquare size={24} style={{ color: "var(--color-hot-pink)" }} />
+              <h3 className="text-xl font-bold" style={{ color: "var(--color-hot-pink)" }}>
+                Recent Forum Posts
+              </h3>
+            </div>
+            <div className="space-y-3">
+              {recentPosts.map((post) => (
+                <div
+                  key={post.id}
+                  className="p-4 rounded-lg border"
+                  style={{
+                    background: "rgba(255, 20, 147, 0.03)",
+                    borderColor: "rgba(0, 217, 255, 0.1)",
+                  }}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold mb-1" style={{ color: "var(--color-cyan)" }}>
+                        {post.title}
+                      </h4>
+                      <p style={{ color: "var(--color-text-secondary)" }} className="text-sm mb-2 line-clamp-2">
+                        {post.content}
+                      </p>
+                      <div className="flex items-center gap-3 text-xs">
+                        <span
+                          className="px-2 py-1 rounded"
+                          style={{
+                            background: `${getCategoryColor(post.category)}20`,
+                            color: getCategoryColor(post.category),
+                          }}
+                        >
+                          {post.category}
+                        </span>
+                        <div className="flex items-center gap-1" style={{ color: "var(--color-text-secondary)" }}>
+                          <Clock size={14} />
+                          {new Date(post.timestamp).toLocaleDateString()}
+                        </div>
+                        <div style={{ color: "var(--color-cyan)" }}>
+                          {post.replies} replies
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Account Info */}
         <div
           className="rounded-lg border p-6"
@@ -264,6 +353,12 @@ export default function UserProfile() {
               <span style={{ color: "var(--color-text-secondary)" }}>Total Items Created</span>
               <span style={{ color: "var(--color-hot-pink)" }} className="font-semibold">
                 {stats.totalNightmares + stats.totalReadings + stats.totalPrompts}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span style={{ color: "var(--color-text-secondary)" }}>Forum Posts</span>
+              <span style={{ color: "var(--color-hot-pink)" }} className="font-semibold">
+                {recentPosts.length}
               </span>
             </div>
           </div>

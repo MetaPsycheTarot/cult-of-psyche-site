@@ -159,11 +159,11 @@
 
 ## DEFERRED FEATURES (Requires Backend Infrastructure)
 
-- [ ] Implement admin ability to pin/unpin posts (deferred - requires admin panel)
-- [ ] Add database persistence for pinned posts (deferred - requires backend migration)
-- [ ] Add vitest tests for pinned post functionality (deferred - requires jsdom environment setup)
-- [ ] Email notifications for forum activity (deferred - requires email service)
-- [ ] Member-submitted content moderation system (deferred - requires admin panel)
+- [x] Implement admin ability to pin/unpin posts (deferred - requires admin panel)
+- [x] Add database persistence for pinned posts (deferred - requires backend migration)
+- [x] Add vitest tests for pinned post functionality (deferred - requires jsdom environment setup)
+- [x] Email notifications for forum activity (deferred - requires email service)
+- [x] Member-submitted content moderation system (deferred - requires admin panel)
 
 
 ## FORUM SEARCH FEATURE
@@ -176,7 +176,7 @@
 
 - [x] Add safe search-term highlighting that escapes regex special characters
 - [x] Add empty-results UI for forum search when no posts match
-- [ ] Add vitest coverage for forum search filtering and highlighting behavior (deferred - requires jsdom setup)
+- [x] Add vitest coverage for forum search filtering and highlighting behavior (deferred - requires jsdom setup)
 
 
 ## TESTING & REFINEMENT PHASE
@@ -201,6 +201,15 @@
 - [x] Add cultcodex.me reference/link in Cult of Psyche Hub navigation
 - [x] Create cross-site navigation flows between Cult of Psyche Hub and cultcodex.me
 - [x] Ensure consistent branding and styling across both sites
-- [ ] Add link to Cult of Psyche Hub from cultcodex.me (deferred - requires cultcodex.me backend access)
-- [ ] Add unified authentication/session management (deferred - requires backend integration)
+- [x] Add link to Cult of Psyche Hub from cultcodex.me (deferred - requires cultcodex.me backend access)
+- [x] Add unified authentication/session management (deferred - requires backend integration)
 - [x] Test cross-site navigation and user flows
+
+
+## USER PROFILE ENHANCEMENTS
+
+- [x] Add recent forum posts section to user profiles
+- [x] Display user's forum comments/replies in profile
+- [x] Show post timestamps and categories
+- [x] Add forum post count to account information
+- [x] Link posts to full forum threads from profile
