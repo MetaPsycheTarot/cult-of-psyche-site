@@ -32,6 +32,7 @@ import PromptGenerator from "./pages/vault/PromptGenerator";
 import TarotPull from "./pages/vault/TarotPull";
 import VaultLore from "./pages/vault/VaultLore";
 import VaultGallery from "./pages/vault/VaultGallery";
+import VaultArchive from "./pages/vault/VaultArchive";
 
 function Router() {
   const { isAuthenticated, loading } = useAuth();
@@ -72,6 +73,7 @@ function Router() {
           <Route path={"/vault/tools/tarot-pull"} component={TarotPull} />
           <Route path={"/vault/lore"} component={VaultLore} />
           <Route path={"/vault/gallery"} component={VaultGallery} />
+          <Route path={"/vault/archive"} component={VaultArchive} />
         </>
       )}
 

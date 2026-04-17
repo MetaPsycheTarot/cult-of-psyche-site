@@ -110,11 +110,11 @@
 
 ## VAULT LORE SECTION
 
-- [ ] Create /vault/lore page with organized mythology
-- [ ] Add rituals section with descriptions and practices
-- [ ] Add symbol interpretations and meanings
-- [ ] Integrate with tarot deck meanings
-- [ ] Add expandable sections for better UX
+- [x] Create /vault/lore page with organized mythology
+- [x] Add rituals section with descriptions and practices
+- [x] Add symbol interpretations and meanings
+- [x] Integrate with tarot deck meanings
+- [x] Add expandable sections for better UX
 
 
 ## FAN ART GALLERY
@@ -123,3 +123,20 @@
 - [x] Upload and organize fan art images
 - [x] Add video gallery for animated fan content
 - [x] Display with neon-noir aesthetic grid layout
+
+
+## ARCHIVE SECTION
+
+- [x] Create /vault/archive page for user-generated content history
+- [x] Display saved nightmares, readings, and prompts
+- [x] Add filtering and search for archive items
+- [x] Implement export functionality (JSON/PDF)
+- [x] Add archive statistics and insights
+
+## NEXT PHASE: COMMUNITY & ENGAGEMENT
+
+- [ ] User profiles with member stats
+- [ ] Community forum or discussion board
+- [ ] Member-submitted content moderation system
+- [ ] Leaderboards for engagement metrics
+- [ ] Email notifications for new content/events
