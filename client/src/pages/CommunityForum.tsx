@@ -13,7 +13,7 @@ interface ForumPost {
   createdAt: number;
   likes: number;
   replies: number;
-  category: "insights" | "nightmares" | "rituals" | "general";
+  category: "insights" | "nightmares" | "rituals" | "general" | "support";
 }
 
 interface ForumReply {
@@ -30,11 +30,11 @@ export default function CommunityForum() {
   const { user, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
   const [posts, setPosts] = useState<ForumPost[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<"all" | "insights" | "nightmares" | "rituals" | "general">("all");
+  const [selectedCategory, setSelectedCategory] = useState<"all" | "insights" | "nightmares" | "rituals" | "general" | "support">("all");
   const [showNewPost, setShowNewPost] = useState(false);
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
-  const [newPostCategory, setNewPostCategory] = useState<"insights" | "nightmares" | "rituals" | "general">("general");
+  const [newPostCategory, setNewPostCategory] = useState<"insights" | "nightmares" | "rituals" | "general" | "support">("general");
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
 
@@ -151,6 +151,8 @@ export default function CommunityForum() {
         return "var(--color-magenta)";
       case "rituals":
         return "var(--color-hot-pink)";
+      case "support":
+        return "#FFD700";
       default:
         return "var(--color-text-secondary)";
     }
@@ -228,9 +230,9 @@ export default function CommunityForum() {
             />
 
             <div className="flex gap-4 mb-4">
-            <select
-              value={newPostCategory}
-              onChange={(e) => setNewPostCategory(e.target.value as "insights" | "nightmares" | "rituals" | "general")}
+              <select
+                value={newPostCategory}
+                onChange={(e) => setNewPostCategory(e.target.value as "insights" | "nightmares" | "rituals" | "general" | "support")}
                 className="px-4 py-2 rounded-lg"
                 style={{
                   background: "rgba(0, 217, 255, 0.1)",
@@ -242,6 +244,7 @@ export default function CommunityForum() {
                 <option value="nightmares">Nightmares</option>
                 <option value="insights">Insights</option>
                 <option value="rituals">Rituals & Practices</option>
+                <option value="support">Help & Support</option>
               </select>
 
               <button
@@ -271,7 +274,7 @@ export default function CommunityForum() {
 
         {/* Category Filter */}
         <div className="flex gap-2 mb-8 overflow-x-auto">
-          {(["all", "insights", "nightmares", "rituals", "general"] as const).map((cat) => (
+          {(["all", "insights", "nightmares", "rituals", "general", "support"] as const).map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
@@ -287,7 +290,7 @@ export default function CommunityForum() {
                     : "var(--color-text-secondary)",
               }}
             >
-              {cat === "all" ? "All Posts" : cat.charAt(0).toUpperCase() + cat.slice(1)}
+              {cat === "all" ? "All Posts" : cat === "support" ? "Help & Support" : cat.charAt(0).toUpperCase() + cat.slice(1)}
             </button>
           ))}
         </div>

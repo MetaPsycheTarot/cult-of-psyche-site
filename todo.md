@@ -140,3 +140,14 @@
 - [x] Leaderboards for engagement metrics
 - [x] Email notifications for new content/events (deferred - requires backend email service)
 - [x] Member-submitted content moderation system (deferred - requires admin panel)
+
+## POST-DELIVERY ENHANCEMENTS
+
+- [x] Add 'Help & Support' category to community forum
+
+
+## FORUM ENHANCEMENTS
+
+- [ ] Add 'Help & Support' category to community forum
+- [ ] Update forum category filtering to include help/support
+- [ ] Add help-specific styling and icons for support posts
