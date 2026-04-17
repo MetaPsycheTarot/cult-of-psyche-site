@@ -158,3 +158,4 @@
 - [x] Implement pinned post sorting (always appears at top)
 - [ ] Implement admin ability to pin/unpin posts (deferred - requires admin panel)
 - [ ] Add database persistence for pinned posts (deferred - requires backend migration)
+- [ ] Add vitest tests for pinned post functionality (deferred - requires jsdom environment setup)
