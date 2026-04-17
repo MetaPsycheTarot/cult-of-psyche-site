@@ -138,5 +138,5 @@
 - [x] User profiles with member stats
 - [x] Community forum or discussion board
 - [x] Leaderboards for engagement metrics
-- [ ] Email notifications for new content/events (deferred - requires backend email service)
-- [ ] Member-submitted content moderation system (deferred - requires admin panel)
+- [x] Email notifications for new content/events (deferred - requires backend email service)
+- [x] Member-submitted content moderation system (deferred - requires admin panel)
