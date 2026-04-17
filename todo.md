@@ -77,3 +77,27 @@
 - [x] Display card imagery and meanings (Psyche Awakens deck)
 - [x] Save/bookmark readings to localStorage
 - [x] Add reading history (5/5 tests passing)
+
+
+## TAROT CARD IMAGERY
+
+- [ ] Generate 8 Psyche Awakens tarot card images
+- [ ] Upload card images to S3 via manus-upload-file
+- [ ] Update tarot deck data with image URLs
+- [ ] Render card images in /vault/tools/tarot-pull UI
+- [ ] Add card image display to card grid and detail views
+
+
+## 78-CARD TAROT DECK EXPANSION
+
+- [x] Build 78-card data structure (Major Arcana, Wands, Cups, Swords, Pentacles)
+- [x] Add card meanings and interpretations to backend
+- [x] Integrate full deck into tarot router
+- [x] Update tarot pull tool with deck filtering (by suit/arcana)
+- [x] Generate Major Arcana card images (22 cards) - All generated with neon-noir aesthetic
+- [x] Generate Wands suit images (14 cards) - All generated
+- [x] Generate Cups suit images (14 cards) - All generated
+- [x] Generate Swords suit images (14 cards) - All generated
+- [x] Generate Pentacles suit images (14 cards) - All generated
+- [x] Integrate all card images into UI (via tarotCardImages.ts mapping)
+- [x] Test full deck pulls and interpretations

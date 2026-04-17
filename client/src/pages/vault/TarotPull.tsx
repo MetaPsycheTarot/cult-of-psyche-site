@@ -3,9 +3,19 @@ import { trpc } from "@/lib/trpc";
 import { Wand2, Bookmark, BookmarkCheck, Trash2, RotateCcw } from "lucide-react";
 import { Streamdown } from "streamdown";
 
+interface TarotCardType {
+  id: number;
+  name: string;
+  suit: "major" | "wands" | "cups" | "swords" | "pentacles";
+  number: number;
+  meaning: string;
+  interpretation: string;
+  imageUrl?: string;
+}
+
 interface SavedReading {
   id: string;
-  cards: Array<{ id: number; name: string; meaning: string; arcana: string }>;
+  cards: TarotCardType[];
   interpretation: string;
   cardCount: number;
   timestamp: string;
@@ -15,11 +25,11 @@ interface SavedReading {
 export default function TarotPull() {
   const [cardCount, setCardCount] = useState<"1" | "3">("1");
   const [question, setQuestion] = useState("");
+  const [suit, setSuit] = useState<"major" | "wands" | "cups" | "swords" | "pentacles" | "all">("all");
   const [reading, setReading] = useState<{
-    cards: Array<{ id: number; name: string; meaning: string; arcana: string }>;
+    cards: TarotCardType[];
     interpretation: string;
     cardCount: number;
-    timestamp: Date;
   } | null>(null);
   const [savedReadings, setSavedReadings] = useState<SavedReading[]>([]);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -39,6 +49,7 @@ export default function TarotPull() {
     const result = await pullMutation.mutateAsync({
       cardCount,
       question: question || undefined,
+      suit,
     });
     setReading(result);
     setIsBookmarked(false);
@@ -76,21 +87,15 @@ export default function TarotPull() {
   };
 
   return (
-    <div
-      className="min-h-screen p-4"
-      style={{ background: "var(--color-midnight)" }}
-    >
+    <div className="min-h-screen p-4" style={{ background: "var(--color-midnight)" }}>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-12">
-          <h1
-            className="text-4xl font-bold mb-2"
-            style={{ color: "var(--color-hot-pink)" }}
-          >
+          <h1 className="text-4xl font-bold mb-2" style={{ color: "var(--color-hot-pink)" }}>
             Tarot Pull
           </h1>
           <p style={{ color: "var(--color-text-secondary)" }}>
-            Consult the Psyche Awakens deck for guidance
+            Consult the Cult of Psyche 78-card deck for guidance
           </p>
         </div>
 
@@ -98,6 +103,35 @@ export default function TarotPull() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left: Pull Interface */}
           <div className="lg:col-span-2">
+            {/* Suit Selection */}
+            <div
+              className="rounded-lg p-6 border-2 mb-6"
+              style={{
+                background: "rgba(255, 20, 147, 0.05)",
+                borderColor: "var(--color-hot-pink)",
+              }}
+            >
+              <h3 className="font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
+                Deck Section
+              </h3>
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {(["all", "major", "wands", "cups", "swords", "pentacles"] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSuit(s)}
+                    className="py-2 px-3 rounded-lg font-bold transition-all text-sm"
+                    style={{
+                      background: suit === s ? "var(--color-hot-pink)" : "rgba(255, 20, 147, 0.1)",
+                      color: suit === s ? "var(--color-midnight)" : "var(--color-hot-pink)",
+                      border: suit === s ? "2px solid var(--color-hot-pink)" : "2px solid rgba(255, 20, 147, 0.3)",
+                    }}
+                  >
+                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Card Count Selection */}
             <div
               className="rounded-lg p-6 border-2 mb-6"
@@ -106,10 +140,7 @@ export default function TarotPull() {
                 borderColor: "var(--color-cyan)",
               }}
             >
-              <h3
-                className="font-bold mb-4"
-                style={{ color: "var(--color-cyan)" }}
-              >
+              <h3 className="font-bold mb-4" style={{ color: "var(--color-cyan)" }}>
                 Draw Type
               </h3>
               <div className="flex gap-4">
@@ -119,18 +150,9 @@ export default function TarotPull() {
                     onClick={() => setCardCount(count)}
                     className="flex-1 py-3 px-4 rounded-lg font-bold transition-all"
                     style={{
-                      background:
-                        cardCount === count
-                          ? "var(--color-hot-pink)"
-                          : "rgba(255, 20, 147, 0.1)",
-                      color:
-                        cardCount === count
-                          ? "var(--color-midnight)"
-                          : "var(--color-hot-pink)",
-                      border:
-                        cardCount === count
-                          ? "2px solid var(--color-hot-pink)"
-                          : "2px solid rgba(255, 20, 147, 0.3)",
+                      background: cardCount === count ? "var(--color-hot-pink)" : "rgba(255, 20, 147, 0.1)",
+                      color: cardCount === count ? "var(--color-midnight)" : "var(--color-hot-pink)",
+                      border: cardCount === count ? "2px solid var(--color-hot-pink)" : "2px solid rgba(255, 20, 147, 0.3)",
                     }}
                   >
                     {count === "1" ? "Single Card" : "Three Card"}
@@ -147,10 +169,7 @@ export default function TarotPull() {
                 borderColor: "var(--color-hot-pink)",
               }}
             >
-              <h3
-                className="font-bold mb-4"
-                style={{ color: "var(--color-hot-pink)" }}
-              >
+              <h3 className="font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
                 Your Question (Optional)
               </h3>
               <textarea
@@ -192,29 +211,18 @@ export default function TarotPull() {
                 }}
               >
                 <div className="flex items-center justify-between mb-6">
-                  <h2
-                    className="text-2xl font-bold"
-                    style={{ color: "var(--color-hot-pink)" }}
-                  >
+                  <h2 className="text-2xl font-bold" style={{ color: "var(--color-hot-pink)" }}>
                     {reading.cardCount === 1 ? "Your Card" : "Your Reading"}
                   </h2>
                   <button
                     onClick={handleBookmark}
                     className="p-2 rounded-lg transition-all"
                     style={{
-                      background: isBookmarked
-                        ? "rgba(255, 20, 147, 0.2)"
-                        : "rgba(0, 217, 255, 0.1)",
-                      color: isBookmarked
-                        ? "var(--color-hot-pink)"
-                        : "var(--color-cyan)",
+                      background: isBookmarked ? "rgba(255, 20, 147, 0.2)" : "rgba(0, 217, 255, 0.1)",
+                      color: isBookmarked ? "var(--color-hot-pink)" : "var(--color-cyan)",
                     }}
                   >
-                    {isBookmarked ? (
-                      <BookmarkCheck size={20} />
-                    ) : (
-                      <Bookmark size={20} />
-                    )}
+                    {isBookmarked ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
                   </button>
                 </div>
 
@@ -230,23 +238,20 @@ export default function TarotPull() {
                       }}
                     >
                       {reading.cardCount === 3 && (
-                        <p
-                          className="text-xs font-bold mb-2 uppercase"
-                          style={{ color: "var(--color-cyan)" }}
-                        >
+                        <p className="text-xs font-bold mb-2 uppercase" style={{ color: "var(--color-cyan)" }}>
                           {idx === 0 ? "Past" : idx === 1 ? "Present" : "Future"}
                         </p>
                       )}
-                      <h4
-                        className="font-bold mb-2"
-                        style={{ color: "var(--color-hot-pink)" }}
-                      >
+                      {card.imageUrl && (
+                        <img src={card.imageUrl} alt={card.name} className="w-full h-48 object-cover rounded-lg mb-3" />
+                      )}
+                      <p className="text-xs font-bold mb-2 uppercase" style={{ color: "var(--color-hot-pink)" }}>
                         {card.name}
-                      </h4>
-                      <p
-                        className="text-sm"
-                        style={{ color: "var(--color-text-secondary)" }}
-                      >
+                      </p>
+                      <p className="text-xs mb-2" style={{ color: "var(--color-text-secondary)" }}>
+                        {card.suit.charAt(0).toUpperCase() + card.suit.slice(1)}
+                      </p>
+                      <p className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
                         {card.meaning}
                       </p>
                     </div>
@@ -255,122 +260,105 @@ export default function TarotPull() {
 
                 {/* Interpretation */}
                 <div
-                  className="p-6 rounded-lg mb-6"
+                  className="p-6 rounded-lg border-l-4"
                   style={{
                     background: "rgba(0, 217, 255, 0.05)",
-                    borderLeft: "4px solid var(--color-cyan)",
+                    borderColor: "var(--color-cyan)",
                   }}
                 >
-                  <h3
-                    className="font-bold mb-3"
-                    style={{ color: "var(--color-cyan)" }}
-                  >
+                  <h3 className="font-bold mb-4" style={{ color: "var(--color-cyan)" }}>
                     Interpretation
                   </h3>
-                  <div style={{ color: "var(--color-text-secondary)" }}>
-                    <Streamdown>
-                      {reading.interpretation}
-                    </Streamdown>
+                  <div style={{ color: "var(--color-text-primary)" }}>
+                    <Streamdown>{reading.interpretation}</Streamdown>
                   </div>
                 </div>
-
-                {/* New Pull Button */}
-                <button
-                  onClick={() => {
-                    setReading(null);
-                    setQuestion("");
-                  }}
-                  className="w-full py-3 px-4 rounded-lg font-bold transition-all flex items-center justify-center gap-2"
-                  style={{
-                    background: "rgba(0, 217, 255, 0.1)",
-                    color: "var(--color-cyan)",
-                    border: "2px solid var(--color-cyan)",
-                  }}
-                >
-                  <RotateCcw size={18} />
-                  Pull Again
-                </button>
               </div>
             )}
           </div>
 
-          {/* Right: History Sidebar */}
+          {/* Right: History */}
           <div>
             <div
               className="rounded-lg p-6 border-2 sticky top-4"
               style={{
-                background: "rgba(255, 20, 147, 0.05)",
-                borderColor: "var(--color-hot-pink)",
+                background: "rgba(0, 217, 255, 0.05)",
+                borderColor: "var(--color-cyan)",
               }}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3
-                  className="font-bold"
-                  style={{ color: "var(--color-hot-pink)" }}
-                >
-                  Saved Readings ({savedReadings.length})
+                <h3 className="font-bold" style={{ color: "var(--color-cyan)" }}>
+                  Reading History
                 </h3>
                 {savedReadings.length > 0 && (
                   <button
-                    onClick={handleClearAll}
-                    className="text-xs p-1 rounded opacity-60 hover:opacity-100 transition-opacity"
+                    onClick={() => setShowHistory(!showHistory)}
+                    className="text-xs font-bold"
                     style={{ color: "var(--color-hot-pink)" }}
                   >
-                    Clear
+                    {showHistory ? "Hide" : "Show"}
                   </button>
                 )}
               </div>
 
-              {savedReadings.length === 0 ? (
-                <p
-                  className="text-sm"
-                  style={{ color: "var(--color-text-secondary)" }}
-                >
-                  No saved readings yet. Bookmark a reading to save it.
-                </p>
-              ) : (
+              {showHistory && savedReadings.length > 0 && (
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {savedReadings.map((saved) => (
+                  {savedReadings.map((reading) => (
                     <div
-                      key={saved.id}
+                      key={reading.id}
                       className="p-3 rounded-lg text-sm"
                       style={{
-                        background: "rgba(0, 217, 255, 0.1)",
-                        borderLeft: "3px solid var(--color-cyan)",
+                        background: "rgba(255, 20, 147, 0.1)",
+                        borderLeft: "2px solid var(--color-hot-pink)",
                       }}
                     >
-                      <div className="flex items-start justify-between mb-2">
-                        <span
-                          className="font-bold"
-                          style={{ color: "var(--color-cyan)" }}
-                        >
-                          {saved.cardCount === 1 ? "1 Card" : "3 Cards"}
-                        </span>
-                        <button
-                          onClick={() => handleDeleteReading(saved.id)}
-                          className="p-1 opacity-60 hover:opacity-100 transition-opacity"
-                          style={{ color: "var(--color-hot-pink)" }}
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                      {saved.question && (
-                        <p
-                          className="text-xs mb-2 italic"
-                          style={{ color: "var(--color-text-secondary)" }}
-                        >
-                          "{saved.question}"
+                      <p className="font-bold mb-1" style={{ color: "var(--color-hot-pink)" }}>
+                        {reading.cards.map((c) => c.name).join(" + ")}
+                      </p>
+                      <p className="text-xs mb-2" style={{ color: "var(--color-text-secondary)" }}>
+                        {new Date(reading.timestamp).toLocaleDateString()}
+                      </p>
+                      {reading.question && (
+                        <p className="text-xs italic mb-2" style={{ color: "var(--color-cyan)" }}>
+                          "{reading.question}"
                         </p>
                       )}
-                      <p
-                        className="text-xs"
-                        style={{ color: "var(--color-text-secondary)" }}
+                      <button
+                        onClick={() => handleDeleteReading(reading.id)}
+                        className="text-xs font-bold transition-all"
+                        style={{ color: "var(--color-hot-pink)" }}
                       >
-                        {new Date(saved.timestamp).toLocaleDateString()}
-                      </p>
+                        <Trash2 size={14} className="inline mr-1" />
+                        Delete
+                      </button>
                     </div>
                   ))}
+                  {savedReadings.length > 0 && (
+                    <button
+                      onClick={handleClearAll}
+                      className="w-full py-2 px-3 rounded-lg text-xs font-bold transition-all"
+                      style={{
+                        background: "rgba(255, 20, 147, 0.2)",
+                        color: "var(--color-hot-pink)",
+                      }}
+                    >
+                      <RotateCcw size={14} className="inline mr-1" />
+                      Clear All
+                    </button>
+                  )}
                 </div>
+              )}
+
+              {!showHistory && savedReadings.length > 0 && (
+                <p className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
+                  {savedReadings.length} reading{savedReadings.length !== 1 ? "s" : ""} saved
+                </p>
+              )}
+
+              {savedReadings.length === 0 && (
+                <p className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
+                  No saved readings yet. Bookmark readings to save them here.
+                </p>
               )}
             </div>
           </div>

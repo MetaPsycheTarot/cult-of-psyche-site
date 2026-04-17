@@ -1,100 +1,51 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../_core/trpc";
+import { protectedProcedure, router } from "../_core/trpc";
 import { invokeLLM } from "../_core/llm";
-
-// Psyche Awakens Tarot Deck
-const TAROT_DECK = [
-  {
-    id: 1,
-    name: "The Awakening",
-    meaning: "Consciousness, initiation, new beginnings",
-    arcana: "Major",
-  },
-  {
-    id: 2,
-    name: "The Shadow",
-    meaning: "Unconscious forces, hidden truths, inner darkness",
-    arcana: "Major",
-  },
-  {
-    id: 3,
-    name: "The Mirror",
-    meaning: "Self-reflection, identity, truth revealed",
-    arcana: "Major",
-  },
-  {
-    id: 4,
-    name: "The Void",
-    meaning: "Emptiness, potential, the unknown",
-    arcana: "Major",
-  },
-  {
-    id: 5,
-    name: "The Spiral",
-    meaning: "Cycles, transformation, evolution",
-    arcana: "Major",
-  },
-  {
-    id: 6,
-    name: "The Threshold",
-    meaning: "Crossroads, choice, transition",
-    arcana: "Major",
-  },
-  {
-    id: 7,
-    name: "The Ritual",
-    meaning: "Intention, manifestation, sacred action",
-    arcana: "Major",
-  },
-  {
-    id: 8,
-    name: "The Dissolution",
-    meaning: "Endings, release, letting go",
-    arcana: "Major",
-  },
-];
-
-function getRandomCards(count: number): typeof TAROT_DECK {
-  const shuffled = [...TAROT_DECK].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
-}
+import { TAROT_DECK } from "../data/tarotDeck";
+import { getCardImageUrl } from "../data/tarotCardImages";
 
 export const tarotRouter = router({
-  pull: publicProcedure
+  pull: protectedProcedure
     .input(
       z.object({
         cardCount: z.enum(["1", "3"]),
         question: z.string().optional(),
+        suit: z.enum(["major", "wands", "cups", "swords", "pentacles", "all"]).optional(),
       })
     )
     .mutation(async ({ input }) => {
       const count = parseInt(input.cardCount);
-      const cards = getRandomCards(count);
+      let availableCards = TAROT_DECK;
+
+      // Filter by suit if specified
+      if (input.suit && input.suit !== "all") {
+        availableCards = TAROT_DECK.filter((card) => card.suit === input.suit);
+      }
+
+      // Get random cards from filtered deck
+      const cards = [];
+      const shuffled = [...availableCards].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < count && i < shuffled.length; i++) {
+        cards.push(shuffled[i]!);
+      }
 
       // Generate AI interpretation
+      const cardNames = cards.map((c) => c.name).join(", ");
+      const cardMeanings = cards
+        .map((c) => `${c.name} (${c.suit}): ${c.meaning}`)
+        .join("\n");
+
       const prompt =
-        count === 1
-          ? `You are a mystical tarot interpreter for the Psyche Awakens deck. A seeker has drawn one card for guidance${input.question ? ` about: ${input.question}` : ""}.
+        input.question
+          ? `You are a mystical tarot reader for the Cult of Psyche. A member asks: "${input.question}"\n\nThey drew: ${cardNames}\n\nCard meanings:\n${cardMeanings}\n\nProvide a brief, mysterious, and insightful interpretation that connects these cards to their question. Keep it under 250 words. Use poetic language that fits the neon-noir aesthetic of the Cult of Psyche. Reference the show, community, or occult themes when relevant.`
+          : `You are a mystical tarot reader for the Cult of Psyche. A member drew: ${cardNames}\n\nCard meanings:\n${cardMeanings}\n\nProvide a brief, mysterious, and insightful interpretation of what these cards reveal. Keep it under 250 words. Use poetic language that fits the neon-noir aesthetic of the Cult of Psyche. Reference the show, community, or occult themes when relevant.`;
 
-Card drawn: ${cards[0]?.name}
-Meaning: ${cards[0]?.meaning}
-
-Provide a brief, poetic, and insightful interpretation (2-3 sentences) of what this card means for them right now. Be mysterious but helpful.`
-          : `You are a mystical tarot interpreter for the Psyche Awakens deck. A seeker has drawn three cards for guidance${input.question ? ` about: ${input.question}` : ""}.
-
-Cards drawn (Past, Present, Future):
-1. ${cards[0]?.name} - ${cards[0]?.meaning}
-2. ${cards[1]?.name} - ${cards[1]?.meaning}
-3. ${cards[2]?.name} - ${cards[2]?.meaning}
-
-Provide a brief, poetic narrative (3-4 sentences) connecting these three cards as a story of transformation. Be mysterious but insightful.`;
-
-      const interpretation = await invokeLLM({
+      const response = await invokeLLM({
         messages: [
           {
             role: "system",
             content:
-              "You are a mystical tarot interpreter. Speak in poetic, mysterious language. Keep responses concise but profound.",
+              "You are a mystical tarot reader for the Cult of Psyche. Speak in poetic, mysterious language deeply connected to streaming culture, community dynamics, and occult themes. Keep responses concise but profound.",
           },
           {
             role: "user",
@@ -103,16 +54,40 @@ Provide a brief, poetic narrative (3-4 sentences) connecting these three cards a
         ],
       });
 
-      const interpretationText =
-        typeof interpretation.choices[0]?.message.content === "string"
-          ? interpretation.choices[0].message.content
-          : "The cards speak in whispers beyond words.";
+      const interpretation =
+        typeof response.choices[0]?.message.content === "string"
+          ? response.choices[0].message.content
+          : "The cards speak in silence.";
+
+      // Add image URLs to cards
+      const cardsWithImages = cards.map((card) => ({
+        ...card,
+        imageUrl: getCardImageUrl(card.name.toLowerCase().replace(/\s+/g, "-")),
+      }));
 
       return {
-        cards,
-        interpretation: interpretationText,
+        cards: cardsWithImages,
         cardCount: count,
-        timestamp: new Date(),
+        interpretation,
       };
+    }),
+
+  // Get all cards by suit
+  getCardsBySuit: protectedProcedure
+    .input(z.object({ suit: z.enum(["major", "wands", "cups", "swords", "pentacles"]) }))
+    .query(({ input }) => {
+      return TAROT_DECK.filter((card) => card.suit === input.suit);
+    }),
+
+  // Get all cards
+  getAllCards: protectedProcedure.query(() => {
+    return TAROT_DECK;
+  }),
+
+  // Get card by ID
+  getCardById: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(({ input }) => {
+      return TAROT_DECK.find((card) => card.id === input.id);
     }),
 });
