@@ -213,3 +213,15 @@
 - [x] Show post timestamps and categories
 - [x] Add forum post count to account information
 - [x] Link posts to full forum threads from profile
+
+
+## READINGS PAGE ENHANCEMENTS
+
+- [x] Enhance tarot pull mechanics with multiple spread types (Single, 3-card, Pyramid, Celtic Cross)
+- [x] Add detailed card interpretations with position meanings
+- [x] Create spread layout visualizations with position labels
+- [x] Add reading history with timestamps and notes
+- [x] Implement save/bookmark readings functionality
+- [x] Add guidance prompts for reading interpretation
+- [x] Add reading statistics and insights (card count, spread type)
+- [ ] Create visual card animations for pulls (enhancement)

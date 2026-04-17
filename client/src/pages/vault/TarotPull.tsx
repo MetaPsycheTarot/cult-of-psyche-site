@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
-import { Wand2, Bookmark, BookmarkCheck, Trash2, RotateCcw } from "lucide-react";
+import { Wand2, Bookmark, BookmarkCheck, Trash2, RotateCcw, Info, Sparkles } from "lucide-react";
 import { Streamdown } from "streamdown";
 
 interface TarotCardType {
@@ -11,6 +11,7 @@ interface TarotCardType {
   meaning: string;
   interpretation: string;
   imageUrl?: string;
+  reversed?: boolean;
 }
 
 interface SavedReading {
@@ -18,12 +19,15 @@ interface SavedReading {
   cards: TarotCardType[];
   interpretation: string;
   cardCount: number;
+  spreadType: string;
   timestamp: string;
   question?: string;
+  notes?: string;
 }
 
 export default function TarotPull() {
-  const [cardCount, setCardCount] = useState<"1" | "3">("1");
+  const [cardCount, setCardCount] = useState<"1" | "3" | "5" | "10">("3");
+  const [spreadType, setSpreadType] = useState<"single" | "threecard" | "celticcross" | "pyramid">("threecard");
   const [question, setQuestion] = useState("");
   const [suit, setSuit] = useState<"major" | "wands" | "cups" | "swords" | "pentacles" | "all">("all");
   const [reading, setReading] = useState<{
@@ -34,6 +38,9 @@ export default function TarotPull() {
   const [savedReadings, setSavedReadings] = useState<SavedReading[]>([]);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [readingNotes, setReadingNotes] = useState("");
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [showInterpretationGuide, setShowInterpretationGuide] = useState(false);
 
   const pullMutation = trpc.tarot.pull.useMutation();
 
@@ -45,6 +52,24 @@ export default function TarotPull() {
     }
   }, []);
 
+  // Update card count based on spread type
+  useEffect(() => {
+    switch (spreadType) {
+      case "single":
+        setCardCount("1");
+        break;
+      case "threecard":
+        setCardCount("3");
+        break;
+      case "celticcross":
+        setCardCount("10");
+        break;
+      case "pyramid":
+        setCardCount("5");
+        break;
+    }
+  }, [spreadType]);
+
   const handlePull = async () => {
     const result = await pullMutation.mutateAsync({
       cardCount,
@@ -53,6 +78,8 @@ export default function TarotPull() {
     });
     setReading(result);
     setIsBookmarked(false);
+    setReadingNotes("");
+    setSelectedCard(null);
   };
 
   const handleBookmark = () => {
@@ -63,8 +90,10 @@ export default function TarotPull() {
       cards: reading.cards,
       interpretation: reading.interpretation,
       cardCount: reading.cardCount,
+      spreadType,
       timestamp: new Date().toISOString(),
       question: question || undefined,
+      notes: readingNotes || undefined,
     };
 
     const updated = [newReading, ...savedReadings];
@@ -86,24 +115,49 @@ export default function TarotPull() {
     }
   };
 
+  const getSpreadDescription = (spread: string) => {
+    const descriptions: Record<string, string> = {
+      single: "A single card pull for quick guidance on any question.",
+      threecard: "Past, Present, Future - understand your journey through time.",
+      celticcross: "The classic 10-card spread revealing deep insights into your situation.",
+      pyramid: "A 5-card pyramid spread for layered understanding and clarity.",
+    };
+    return descriptions[spread] || "";
+  };
+
+  const getSpreadPositions = (spread: string, count: number) => {
+    const positions: Record<string, string[]> = {
+      single: ["The Card"],
+      threecard: ["Past", "Present", "Future"],
+      celticcross: ["You", "Cross", "Crown", "Foundation", "Recent", "Near Future", "You", "External", "Hopes", "Outcome"],
+      pyramid: ["Foundation", "Challenge", "Influence", "Guidance", "Outcome"],
+    };
+    return positions[spread] || [];
+  };
+
+  const spreadPositions = getSpreadPositions(spreadType, parseInt(cardCount));
+
   return (
     <div className="min-h-screen p-4" style={{ background: "var(--color-midnight)" }}>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-2" style={{ color: "var(--color-hot-pink)" }}>
-            Tarot Pull
-          </h1>
+          <div className="flex items-center gap-3 mb-2">
+            <Sparkles size={32} style={{ color: "var(--color-hot-pink)" }} />
+            <h1 className="text-4xl font-bold" style={{ color: "var(--color-hot-pink)" }}>
+              Tarot Readings
+            </h1>
+          </div>
           <p style={{ color: "var(--color-text-secondary)" }}>
-            Consult the Cult of Psyche 78-card deck for guidance
+            Consult the Cult of Psyche 78-card deck for profound guidance and insight
           </p>
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left: Pull Interface */}
           <div className="lg:col-span-2">
-            {/* Suit Selection */}
+            {/* Spread Type Selection */}
             <div
               className="rounded-lg p-6 border-2 mb-6"
               style={{
@@ -112,27 +166,33 @@ export default function TarotPull() {
               }}
             >
               <h3 className="font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
-                Deck Section
+                ✨ Spread Type
               </h3>
-              <div className="grid grid-cols-3 gap-2 mb-4">
-                {(["all", "major", "wands", "cups", "swords", "pentacles"] as const).map((s) => (
+              <div className="space-y-2">
+                {(["single", "threecard", "pyramid", "celticcross"] as const).map((spread) => (
                   <button
-                    key={s}
-                    onClick={() => setSuit(s)}
-                    className="py-2 px-3 rounded-lg font-bold transition-all text-sm"
+                    key={spread}
+                    onClick={() => setSpreadType(spread)}
+                    className="w-full py-3 px-4 rounded-lg font-bold transition-all text-left"
                     style={{
-                      background: suit === s ? "var(--color-hot-pink)" : "rgba(255, 20, 147, 0.1)",
-                      color: suit === s ? "var(--color-midnight)" : "var(--color-hot-pink)",
-                      border: suit === s ? "2px solid var(--color-hot-pink)" : "2px solid rgba(255, 20, 147, 0.3)",
+                      background: spreadType === spread ? "var(--color-hot-pink)" : "rgba(255, 20, 147, 0.1)",
+                      color: spreadType === spread ? "var(--color-midnight)" : "var(--color-hot-pink)",
+                      border: spreadType === spread ? "2px solid var(--color-hot-pink)" : "2px solid rgba(255, 20, 147, 0.3)",
                     }}
                   >
-                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                    <div className="font-bold">
+                      {spread === "single" && "🃏 Single Card"}
+                      {spread === "threecard" && "📖 Three Card (Past/Present/Future)"}
+                      {spread === "pyramid" && "🔺 Pyramid (5 Cards)"}
+                      {spread === "celticcross" && "✝️ Celtic Cross (10 Cards)"}
+                    </div>
+                    <div className="text-xs opacity-75 mt-1">{getSpreadDescription(spread)}</div>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Card Count Selection */}
+            {/* Suit Selection */}
             <div
               className="rounded-lg p-6 border-2 mb-6"
               style={{
@@ -141,21 +201,21 @@ export default function TarotPull() {
               }}
             >
               <h3 className="font-bold mb-4" style={{ color: "var(--color-cyan)" }}>
-                Draw Type
+                Deck Section
               </h3>
-              <div className="flex gap-4">
-                {(["1", "3"] as const).map((count) => (
+              <div className="grid grid-cols-3 gap-2">
+                {(["all", "major", "wands", "cups", "swords", "pentacles"] as const).map((s) => (
                   <button
-                    key={count}
-                    onClick={() => setCardCount(count)}
-                    className="flex-1 py-3 px-4 rounded-lg font-bold transition-all"
+                    key={s}
+                    onClick={() => setSuit(s)}
+                    className="py-2 px-3 rounded-lg font-bold transition-all text-sm"
                     style={{
-                      background: cardCount === count ? "var(--color-hot-pink)" : "rgba(255, 20, 147, 0.1)",
-                      color: cardCount === count ? "var(--color-midnight)" : "var(--color-hot-pink)",
-                      border: cardCount === count ? "2px solid var(--color-hot-pink)" : "2px solid rgba(255, 20, 147, 0.3)",
+                      background: suit === s ? "var(--color-cyan)" : "rgba(0, 217, 255, 0.1)",
+                      color: suit === s ? "var(--color-midnight)" : "var(--color-cyan)",
+                      border: suit === s ? "2px solid var(--color-cyan)" : "2px solid rgba(0, 217, 255, 0.3)",
                     }}
                   >
-                    {count === "1" ? "Single Card" : "Three Card"}
+                    {s.charAt(0).toUpperCase() + s.slice(1)}
                   </button>
                 ))}
               </div>
@@ -175,14 +235,14 @@ export default function TarotPull() {
               <textarea
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
-                placeholder="What do you seek guidance on?"
+                placeholder="What do you seek guidance on? Be specific for deeper insights..."
                 className="w-full p-3 rounded-lg bg-opacity-10 text-white placeholder-gray-500 focus:outline-none"
                 style={{
                   background: "rgba(0, 217, 255, 0.1)",
                   borderBottom: "2px solid var(--color-cyan)",
                   color: "var(--color-text-primary)",
                 }}
-                rows={3}
+                rows={4}
               />
             </div>
 
@@ -198,9 +258,47 @@ export default function TarotPull() {
               }}
             >
               <Wand2 size={20} />
-              {pullMutation.isPending ? "Drawing..." : "Pull Cards"}
+              {pullMutation.isPending ? "Drawing from the deck..." : "Pull Cards"}
             </button>
 
+            {/* Interpretation Guide */}
+            <button
+              onClick={() => setShowInterpretationGuide(!showInterpretationGuide)}
+              className="w-full py-3 px-4 rounded-lg font-bold transition-all flex items-center justify-center gap-2"
+              style={{
+                background: "rgba(0, 217, 255, 0.1)",
+                color: "var(--color-cyan)",
+                border: "2px solid rgba(0, 217, 255, 0.3)",
+              }}
+            >
+              <Info size={18} />
+              {showInterpretationGuide ? "Hide" : "Show"} Interpretation Guide
+            </button>
+
+            {showInterpretationGuide && (
+              <div
+                className="rounded-lg p-6 border-2 mt-6"
+                style={{
+                  background: "rgba(0, 217, 255, 0.05)",
+                  borderColor: "var(--color-cyan)",
+                }}
+              >
+                <h4 className="font-bold mb-3" style={{ color: "var(--color-cyan)" }}>
+                  💡 How to Interpret Your Reading
+                </h4>
+                <div className="space-y-2 text-sm" style={{ color: "var(--color-text-secondary)" }}>
+                  <p>• <strong>Card Position:</strong> Each position in the spread has specific meaning</p>
+                  <p>• <strong>Card Meaning:</strong> Consider the card's traditional meaning and your intuition</p>
+                  <p>• <strong>Suit Significance:</strong> Wands (action), Cups (emotion), Swords (thought), Pentacles (material)</p>
+                  <p>• <strong>Your Question:</strong> Relate the cards back to your specific question</p>
+                  <p>• <strong>Trust Your Intuition:</strong> Your first impression often holds the deepest truth</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right: Reading Display & History */}
+          <div className="lg:col-span-2 space-y-6">
             {/* Reading Display */}
             {reading && (
               <div
@@ -212,7 +310,10 @@ export default function TarotPull() {
               >
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold" style={{ color: "var(--color-hot-pink)" }}>
-                    {reading.cardCount === 1 ? "Your Card" : "Your Reading"}
+                    {spreadType === "single" && "Your Card"}
+                    {spreadType === "threecard" && "Your Reading"}
+                    {spreadType === "pyramid" && "Your Pyramid"}
+                    {spreadType === "celticcross" && "Celtic Cross"}
                   </h2>
                   <button
                     onClick={handleBookmark}
@@ -226,59 +327,102 @@ export default function TarotPull() {
                   </button>
                 </div>
 
-                {/* Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                {/* Cards Grid */}
+                <div className={`grid gap-4 mb-6 ${reading.cardCount === 1 ? "grid-cols-1" : reading.cardCount === 3 ? "grid-cols-3" : reading.cardCount === 5 ? "grid-cols-2" : "grid-cols-2"}`}>
                   {reading.cards.map((card, idx) => (
-                    <div
+                    <button
                       key={card.id}
-                      className="p-4 rounded-lg text-center"
+                      onClick={() => setSelectedCard(selectedCard === idx ? null : idx)}
+                      className="p-4 rounded-lg text-center transition-all cursor-pointer"
                       style={{
-                        background: "rgba(255, 20, 147, 0.1)",
-                        borderLeft: "4px solid var(--color-hot-pink)",
+                        background: selectedCard === idx ? "rgba(255, 20, 147, 0.2)" : "rgba(255, 20, 147, 0.1)",
+                        borderLeft: selectedCard === idx ? "4px solid var(--color-hot-pink)" : "4px solid var(--color-hot-pink)",
+                        opacity: selectedCard === idx ? 1 : 0.8,
                       }}
                     >
-                      {reading.cardCount === 3 && (
+                      {spreadPositions[idx] && (
                         <p className="text-xs font-bold mb-2 uppercase" style={{ color: "var(--color-cyan)" }}>
-                          {idx === 0 ? "Past" : idx === 1 ? "Present" : "Future"}
+                          {spreadPositions[idx]}
                         </p>
                       )}
                       {card.imageUrl && (
-                        <img src={card.imageUrl} alt={card.name} className="w-full h-48 object-cover rounded-lg mb-3" />
+                        <img src={card.imageUrl} alt={card.name} className="w-full h-32 object-cover rounded-lg mb-3" />
                       )}
-                      <p className="text-xs font-bold mb-2 uppercase" style={{ color: "var(--color-hot-pink)" }}>
+                      <p className="text-sm font-bold mb-1" style={{ color: "var(--color-hot-pink)" }}>
                         {card.name}
                       </p>
-                      <p className="text-xs mb-2" style={{ color: "var(--color-text-secondary)" }}>
-                        {card.suit.charAt(0).toUpperCase() + card.suit.slice(1)}
+                      <p className="text-xs mb-1" style={{ color: "var(--color-text-secondary)" }}>
+                        {card.suit.charAt(0).toUpperCase() + card.suit.slice(1)} {card.number}
                       </p>
-                      <p className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
+                      <p className="text-xs" style={{ color: "var(--color-cyan)" }}>
                         {card.meaning}
                       </p>
-                    </div>
+                    </button>
                   ))}
                 </div>
 
+                {/* Selected Card Details */}
+                {selectedCard !== null && reading.cards[selectedCard] && (
+                  <div
+                    className="p-4 rounded-lg border-l-4 mb-6"
+                    style={{
+                      background: "rgba(0, 217, 255, 0.05)",
+                      borderColor: "var(--color-cyan)",
+                    }}
+                  >
+                    <h4 className="font-bold mb-2" style={{ color: "var(--color-cyan)" }}>
+                      {reading.cards[selectedCard].name} - Detailed Meaning
+                    </h4>
+                    <p className="text-sm" style={{ color: "var(--color-text-primary)" }}>
+                      {reading.cards[selectedCard].interpretation}
+                    </p>
+                  </div>
+                )}
+
                 {/* Interpretation */}
                 <div
-                  className="p-6 rounded-lg border-l-4"
+                  className="p-6 rounded-lg border-l-4 mb-6"
                   style={{
                     background: "rgba(0, 217, 255, 0.05)",
                     borderColor: "var(--color-cyan)",
                   }}
                 >
                   <h3 className="font-bold mb-4" style={{ color: "var(--color-cyan)" }}>
-                    Interpretation
+                    ✨ Interpretation
                   </h3>
-                  <div style={{ color: "var(--color-text-primary)" }}>
+                  <div style={{ color: "var(--color-text-primary)" }} className="text-sm">
                     <Streamdown>{reading.interpretation}</Streamdown>
                   </div>
                 </div>
+
+                {/* Reading Notes */}
+                <div
+                  className="p-4 rounded-lg border-2"
+                  style={{
+                    background: "rgba(255, 20, 147, 0.05)",
+                    borderColor: "var(--color-hot-pink)",
+                  }}
+                >
+                  <h4 className="font-bold mb-2" style={{ color: "var(--color-hot-pink)" }}>
+                    Your Notes
+                  </h4>
+                  <textarea
+                    value={readingNotes}
+                    onChange={(e) => setReadingNotes(e.target.value)}
+                    placeholder="Add personal notes about this reading..."
+                    className="w-full p-3 rounded-lg bg-opacity-10 text-white placeholder-gray-500 focus:outline-none text-sm"
+                    style={{
+                      background: "rgba(0, 217, 255, 0.1)",
+                      borderBottom: "2px solid var(--color-cyan)",
+                      color: "var(--color-text-primary)",
+                    }}
+                    rows={3}
+                  />
+                </div>
               </div>
             )}
-          </div>
 
-          {/* Right: History */}
-          <div>
+            {/* History */}
             <div
               className="rounded-lg p-6 border-2 sticky top-4"
               style={{
@@ -288,7 +432,7 @@ export default function TarotPull() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold" style={{ color: "var(--color-cyan)" }}>
-                  Reading History
+                  📚 Reading History
                 </h3>
                 {savedReadings.length > 0 && (
                   <button
@@ -313,14 +457,23 @@ export default function TarotPull() {
                       }}
                     >
                       <p className="font-bold mb-1" style={{ color: "var(--color-hot-pink)" }}>
-                        {reading.cards.map((c) => c.name).join(" + ")}
+                        {reading.spreadType === "single" && "🃏"}
+                        {reading.spreadType === "threecard" && "📖"}
+                        {reading.spreadType === "pyramid" && "🔺"}
+                        {reading.spreadType === "celticcross" && "✝️"}
+                        {" "}{reading.cards.map((c) => c.name).join(" + ")}
                       </p>
-                      <p className="text-xs mb-2" style={{ color: "var(--color-text-secondary)" }}>
-                        {new Date(reading.timestamp).toLocaleDateString()}
+                      <p className="text-xs mb-1" style={{ color: "var(--color-text-secondary)" }}>
+                        {new Date(reading.timestamp).toLocaleDateString()} {new Date(reading.timestamp).toLocaleTimeString()}
                       </p>
                       {reading.question && (
                         <p className="text-xs italic mb-2" style={{ color: "var(--color-cyan)" }}>
-                          "{reading.question}"
+                          Q: "{reading.question}"
+                        </p>
+                      )}
+                      {reading.notes && (
+                        <p className="text-xs mb-2" style={{ color: "var(--color-text-secondary)" }}>
+                          📝 {reading.notes}
                         </p>
                       )}
                       <button
@@ -328,7 +481,7 @@ export default function TarotPull() {
                         className="text-xs font-bold transition-all"
                         style={{ color: "var(--color-hot-pink)" }}
                       >
-                        <Trash2 size={14} className="inline mr-1" />
+                        <Trash2 size={12} className="inline mr-1" />
                         Delete
                       </button>
                     </div>
@@ -342,7 +495,7 @@ export default function TarotPull() {
                         color: "var(--color-hot-pink)",
                       }}
                     >
-                      <RotateCcw size={14} className="inline mr-1" />
+                      <RotateCcw size={12} className="inline mr-1" />
                       Clear All
                     </button>
                   )}

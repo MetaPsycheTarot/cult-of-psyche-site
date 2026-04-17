@@ -8,7 +8,7 @@ export const tarotRouter = router({
   pull: protectedProcedure
     .input(
       z.object({
-        cardCount: z.enum(["1", "3"]),
+        cardCount: z.enum(["1", "3", "5", "10"]),
         question: z.string().optional(),
         suit: z.enum(["major", "wands", "cups", "swords", "pentacles", "all"]).optional(),
       })
