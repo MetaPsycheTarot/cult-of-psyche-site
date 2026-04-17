@@ -172,4 +172,8 @@
 - [x] Implement search filtering by post title and content
 - [x] Add real-time search result count display
 - [x] Search across all categories or within selected category
-- [ ] Add search-term highlighting in matching post titles/content (enhancement)
+- [x] Add search-term highlighting in matching post titles/content (enhancement)
+
+- [x] Add safe search-term highlighting that escapes regex special characters
+- [x] Add empty-results UI for forum search when no posts match
+- [ ] Add vitest coverage for forum search filtering and highlighting behavior (deferred - requires jsdom setup)

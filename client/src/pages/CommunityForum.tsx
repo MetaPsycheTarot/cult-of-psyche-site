@@ -190,6 +190,20 @@ export default function CommunityForum() {
       return b.createdAt - a.createdAt;
     })
 
+  const highlightSearchTerm = (text: string) => {
+    if (!searchQuery.trim()) return text;
+    try {
+      const query = searchQuery.toLowerCase();
+      const escapedQuery = query.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+      const parts = text.split(new RegExp(`(${escapedQuery})`, 'gi'));
+      return parts.map((part, i) => 
+        part.toLowerCase() === query ? `<mark style="background: rgba(255, 215, 0, 0.4); color: #FFD700; font-weight: bold;">${part}</mark>` : part
+      ).join('');
+    } catch (e) {
+      return text;
+    }
+  };
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "insights":
@@ -406,7 +420,11 @@ export default function CommunityForum() {
                       </span>
                     </div>
                     <h3 className="text-lg font-bold" style={{ color: "var(--color-hot-pink)" }}>
-                      {post.title}
+                      {searchQuery ? (
+                        <span dangerouslySetInnerHTML={{ __html: highlightSearchTerm(post.title) }} />
+                      ) : (
+                        post.title
+                      )}
                     </h3>
                   </div>
                 </button>
@@ -421,7 +439,11 @@ export default function CommunityForum() {
                       style={{ color: "var(--color-text-secondary)" }}
                       className="mb-4 whitespace-pre-wrap"
                     >
-                      {post.content}
+                      {searchQuery ? (
+                        <span dangerouslySetInnerHTML={{ __html: highlightSearchTerm(post.content) }} />
+                      ) : (
+                        post.content
+                      )}
                     </p>
 
                     <div className="flex items-center gap-4 mb-4">
@@ -485,7 +507,9 @@ export default function CommunityForum() {
               }}
             >
               <p style={{ color: "var(--color-text-secondary)" }} className="text-lg">
-                No posts in this category yet. Be the first to share!
+                {searchQuery
+                  ? `No posts match "${searchQuery}". Try a different search term.`
+                  : "No posts in this category yet. Be the first to share!"}
               </p>
             </div>
           )}
