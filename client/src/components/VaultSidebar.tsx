@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import { Zap, Film, Sparkles, Archive, LogOut, Wand2 } from "lucide-react";
+import { Zap, Film, Sparkles, Archive, LogOut, Wand2, BookOpen, Image } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 
@@ -8,6 +8,8 @@ const navItems = [
   { label: "Content", path: "/vault/content", icon: Film },
   { label: "Tarot", path: "/vault/tarot", icon: Sparkles },
   { label: "Tools", path: "/vault/tools", icon: Wand2 },
+  { label: "Lore", path: "/vault/lore", icon: BookOpen },
+  { label: "Gallery", path: "/vault/gallery", icon: Image },
   { label: "Archive", path: "/vault/archive", icon: Archive },
 ];
 

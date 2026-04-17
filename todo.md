@@ -106,3 +106,20 @@
 ## VAULT ENHANCEMENTS
 
 - [x] Add search bar to /vault/tarot for card name/keyword filtering (7/7 tests passing)
+
+
+## VAULT LORE SECTION
+
+- [ ] Create /vault/lore page with organized mythology
+- [ ] Add rituals section with descriptions and practices
+- [ ] Add symbol interpretations and meanings
+- [ ] Integrate with tarot deck meanings
+- [ ] Add expandable sections for better UX
+
+
+## FAN ART GALLERY
+
+- [x] Create /vault/gallery page for community fan art
+- [x] Upload and organize fan art images
+- [x] Add video gallery for animated fan content
+- [x] Display with neon-noir aesthetic grid layout
