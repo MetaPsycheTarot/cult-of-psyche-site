@@ -6,12 +6,10 @@ import { useState } from "react";
 
 const apps = [
   { name: "Home", path: "/" },
-  { name: "Crimson Quill Tales", path: "/crimson-quill-tales" },
-  { name: "Cult Psyche Hub", path: "/cult-psyche-hub" },
-  { name: "Temple of Wisdom", path: "/temple-of-wisdom" },
-  { name: "Oracle Chamber", path: "/oracle-chamber" },
-  { name: "The Becoming Vault", path: "/the-becoming-vault" },
-  { name: "Psyche Path", path: "/psyche-path" },
+  { name: "Watch", path: "/watch" },
+  { name: "Clips", path: "/clips" },
+  { name: "Lore", path: "/lore" },
+  { name: "Join", path: "/join" },
 ];
 
 export default function TopNav() {
