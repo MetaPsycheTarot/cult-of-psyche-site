@@ -20,6 +20,7 @@ export default function VaultTarot() {
   const [, navigate] = useLocation();
   const [selectedCard, setSelectedCard] = useState<TarotCard | null>(null);
   const [suitFilter, setSuitFilter] = useState<"all" | "major" | "wands" | "cups" | "swords" | "pentacles">("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch all cards from backend
   const { data: allCards = [] } = trpc.tarot.getAllCards.useQuery();
@@ -30,8 +31,18 @@ export default function VaultTarot() {
     }
   }, [isAuthenticated, navigate]);
 
-  // Filter cards by suit
-  const filteredCards = suitFilter === "all" ? allCards : allCards.filter((card) => card.suit === suitFilter);
+  // Filter cards by suit and search query
+  const filteredCards = allCards
+    .filter((card) => (suitFilter === "all" ? true : card.suit === suitFilter))
+    .filter((card) => {
+      if (!searchQuery.trim()) return true;
+      const query = searchQuery.toLowerCase();
+      return (
+        card.name.toLowerCase().includes(query) ||
+        card.meaning.toLowerCase().includes(query) ||
+        card.interpretation.toLowerCase().includes(query)
+      );
+    });
 
   const getSuitLabel = (suit: string) => {
     if (suit === "major") return "Major Arcana";
@@ -50,6 +61,27 @@ export default function VaultTarot() {
           <p className="text-lg mb-8" style={{ color: "var(--color-text-secondary)" }}>
             The complete 78-card deck of awakening. Each card holds a key to understanding the self.
           </p>
+
+          {/* Search Bar */}
+          <div className="mb-8">
+            <input
+              type="text"
+              placeholder="Search by card name, meaning, or keyword..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-all"
+              style={{
+                background: "rgba(0, 217, 255, 0.05)",
+                borderColor: "var(--color-cyan)",
+                color: "var(--color-text-primary)",
+              }}
+            />
+            {searchQuery && (
+              <p className="text-sm mt-2" style={{ color: "var(--color-text-secondary)" }}>
+                Found {filteredCards.length} card{filteredCards.length !== 1 ? "s" : ""}
+              </p>
+            )}
+          </div>
 
           {/* Suit Filter */}
           <div className="flex gap-2 mb-8 flex-wrap">

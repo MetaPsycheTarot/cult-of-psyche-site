@@ -101,3 +101,8 @@
 - [x] Generate Pentacles suit images (14 cards) - All generated
 - [x] Integrate all card images into UI (via tarotCardImages.ts mapping)
 - [x] Test full deck pulls and interpretations
+
+
+## VAULT ENHANCEMENTS
+
+- [x] Add search bar to /vault/tarot for card name/keyword filtering (7/7 tests passing)
