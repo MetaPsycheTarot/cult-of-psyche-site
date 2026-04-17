@@ -159,11 +159,11 @@
 
 ## DEFERRED FEATURES (Requires Backend Infrastructure)
 
-- [ ] Implement admin ability to pin/unpin posts (requires admin panel)
-- [ ] Add database persistence for pinned posts (requires backend migration)
-- [ ] Add vitest tests for pinned post functionality (requires jsdom environment setup)
-- [ ] Email notifications for forum activity (requires email service)
-- [ ] Member-submitted content moderation system (requires admin panel)
+- [ ] Implement admin ability to pin/unpin posts (deferred - requires admin panel)
+- [ ] Add database persistence for pinned posts (deferred - requires backend migration)
+- [ ] Add vitest tests for pinned post functionality (deferred - requires jsdom environment setup)
+- [ ] Email notifications for forum activity (deferred - requires email service)
+- [ ] Member-submitted content moderation system (deferred - requires admin panel)
 
 
 ## FORUM SEARCH FEATURE
