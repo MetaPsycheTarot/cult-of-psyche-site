@@ -66,3 +66,14 @@
 - [x] Auto-redirect to /vault/content after 3 seconds
 - [x] Add manual "Enter Vault" CTA button
 - [x] Display first exclusive content preview
+
+
+## TAROT PULL TOOL
+
+- [x] Create /vault/tools/tarot-pull page
+- [x] Implement 1-card draw functionality
+- [x] Implement 3-card draw functionality
+- [x] Add AI-powered card interpretation using LLM
+- [x] Display card imagery and meanings (Psyche Awakens deck)
+- [x] Save/bookmark readings to localStorage
+- [x] Add reading history (5/5 tests passing)
