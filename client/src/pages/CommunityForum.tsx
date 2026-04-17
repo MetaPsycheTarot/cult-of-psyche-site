@@ -14,6 +14,7 @@ interface ForumPost {
   likes: number;
   replies: number;
   category: "insights" | "nightmares" | "rituals" | "general" | "support";
+  isPinned?: boolean;
 }
 
 interface ForumReply {
@@ -47,11 +48,44 @@ export default function CommunityForum() {
   useEffect(() => {
     // Load posts from localStorage
     const saved = localStorage.getItem("forumPosts");
+    const pinnedPost: ForumPost = {
+      id: "pinned-getting-started",
+      author: "System",
+      authorId: "system",
+      title: "📌 Getting Started - Frequently Asked Questions",
+      content: "Welcome to the Cult of Psyche! Here are answers to common questions:\n\nHow do I use the Nightmare Generator?\nThe Nightmare Generator helps you explore and process your subconscious fears. Go to the Vault > Nightmare Generator, set your intensity level, and let the system guide you through a personalized nightmare scenario. Save your nightmares to your archive for later reflection.\n\nWhat is Tarot Pull?\nTarot Pull is an AI-powered divination tool that draws cards from the Major and Minor Arcana. Each card has detailed interpretations. You can save your readings to track patterns and synchronicities over time.\n\nHow do I access the Vault?\nClick VAULT in the sidebar to access all tools: Nightmare Generator, Tarot Pull, Prompts, Gallery, Archive, and Lore. You must be logged in to use Vault features.\n\nWhat's the difference between the categories?\n- Nightmares: Share and discuss dream experiences\n- Insights: Share spiritual observations and synchronicities\n- Rituals: Discuss practices and techniques\n- General: Off-topic discussions\n- Help & Support: Ask questions and get assistance\n\nHow do I earn engagement points?\nCreate posts, reply to others, and like content. Your engagement score determines your member level from Novice to Master.\n\nCan I export my data?\nYes! Go to Archive and use the export button to download your saved content as JSON.\n\nStill have questions? Post in the Help & Support category and our community will help!",
+      createdAt: Date.now() - 604800000,
+      likes: 0,
+      replies: 0,
+      category: "support",
+      isPinned: true,
+    };
+    
     if (saved) {
-      setPosts(JSON.parse(saved));
+      const parsedPosts = JSON.parse(saved);
+      // Ensure pinned post is always present
+      const hasPinned = parsedPosts.some((p: ForumPost) => p.isPinned);
+      if (!hasPinned) {
+        setPosts([pinnedPost, ...parsedPosts]);
+        localStorage.setItem("forumPosts", JSON.stringify([pinnedPost, ...parsedPosts]));
+      } else {
+        setPosts(parsedPosts);
+      }
     } else {
       // Initialize with sample posts
       const samplePosts: ForumPost[] = [
+        {
+          id: "pinned-getting-started",
+          author: "System",
+          authorId: "system",
+          title: "📌 Getting Started - Frequently Asked Questions",
+          content: "Welcome to the Cult of Psyche! Here are answers to common questions:\n\nHow do I use the Nightmare Generator?\nThe Nightmare Generator helps you explore and process your subconscious fears. Go to the Vault > Nightmare Generator, set your intensity level, and let the system guide you through a personalized nightmare scenario. Save your nightmares to your archive for later reflection.\n\nWhat is Tarot Pull?\nTarot Pull is an AI-powered divination tool that draws cards from the Major and Minor Arcana. Each card has detailed interpretations. You can save your readings to track patterns and synchronicities over time.\n\nHow do I access the Vault?\nClick VAULT in the sidebar to access all tools: Nightmare Generator, Tarot Pull, Prompts, Gallery, Archive, and Lore. You must be logged in to use Vault features.\n\nWhat's the difference between the categories?\n- Nightmares: Share and discuss dream experiences\n- Insights: Share spiritual observations and synchronicities\n- Rituals: Discuss practices and techniques\n- General: Off-topic discussions\n- Help & Support: Ask questions and get assistance\n\nHow do I earn engagement points?\nCreate posts, reply to others, and like content. Your engagement score determines your member level from Novice to Master.\n\nCan I export my data?\nYes! Go to Archive and use the export button to download your saved content as JSON.\n\nStill have questions? Post in the Help & Support category and our community will help!",
+          createdAt: Date.now() - 604800000,
+          likes: 0,
+          replies: 0,
+          category: "support",
+          isPinned: true,
+        },
         {
           id: "1",
           author: "Seeker",
@@ -139,9 +173,15 @@ export default function CommunityForum() {
     localStorage.setItem("forumPosts", JSON.stringify(updated));
   };
 
-  const filteredPosts = selectedCategory === "all" 
+  const filteredPosts = (selectedCategory === "all" 
     ? posts 
-    : posts.filter((p) => p.category === selectedCategory);
+    : posts.filter((p) => p.category === selectedCategory)).sort((a, b) => {
+      // Pinned posts always come first
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      // Then sort by creation date (newest first)
+      return b.createdAt - a.createdAt;
+    });
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -303,8 +343,9 @@ export default function CommunityForum() {
                 key={post.id}
                 className="rounded-lg border overflow-hidden transition-all"
                 style={{
-                  background: "rgba(0, 217, 255, 0.03)",
-                  borderColor: "rgba(0, 217, 255, 0.2)",
+                  background: post.isPinned ? "rgba(255, 215, 0, 0.08)" : "rgba(0, 217, 255, 0.03)",
+                  borderColor: post.isPinned ? "rgba(255, 215, 0, 0.4)" : "rgba(0, 217, 255, 0.2)",
+                  borderWidth: post.isPinned ? "2px" : "1px",
                 }}
               >
                 {/* Post Header */}
@@ -318,6 +359,11 @@ export default function CommunityForum() {
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
+                      {post.isPinned && (
+                        <span className="text-lg" title="Pinned Post">
+                          📌
+                        </span>
+                      )}
                       <span
                         className="px-2 py-1 rounded text-xs font-bold"
                         style={{

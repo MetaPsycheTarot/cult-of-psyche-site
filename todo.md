@@ -148,3 +148,13 @@
 - [x] Add 'Help & Support' category to community forum
 - [x] Update forum category filtering to include help/support
 - [x] Add help-specific styling and icons for support posts
+
+
+## PINNED POSTS FEATURE
+
+- [x] Add pinned post functionality to forum (localStorage-based)
+- [x] Create Getting Started pinned post with FAQs
+- [x] Add visual indicator for pinned posts (📌 icon + gold styling)
+- [x] Implement pinned post sorting (always appears at top)
+- [ ] Implement admin ability to pin/unpin posts (deferred - requires admin panel)
+- [ ] Add database persistence for pinned posts (deferred - requires backend migration)
