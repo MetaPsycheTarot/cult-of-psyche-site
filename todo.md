@@ -143,11 +143,8 @@
 
 ## POST-DELIVERY ENHANCEMENTS
 
+- ## FORUM ENHANCEMENTS
+
 - [x] Add 'Help & Support' category to community forum
-
-
-## FORUM ENHANCEMENTS
-
-- [ ] Add 'Help & Support' category to community forum
-- [ ] Update forum category filtering to include help/support
-- [ ] Add help-specific styling and icons for support posts
+- [x] Update forum category filtering to include help/support
+- [x] Add help-specific styling and icons for support posts
