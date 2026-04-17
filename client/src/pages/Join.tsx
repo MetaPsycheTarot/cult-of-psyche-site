@@ -16,7 +16,7 @@ export default function Join() {
         "Lore + rituals",
       ],
       cta: "Join Now",
-      href: "https://cultcodex.me",
+      href: `https://cultcodex.me?success_url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.origin + '/success' : '')}`,
     },
     {
       name: "Lifetime",
@@ -30,7 +30,7 @@ export default function Join() {
         "Future perks included",
       ],
       cta: "Unlock Forever",
-      href: "https://cultcodex.me",
+      href: `https://cultcodex.me?success_url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.origin + '/success' : '')}`,
       featured: true,
     },
   ];

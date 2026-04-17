@@ -19,6 +19,7 @@ import Clips from "./pages/Clips";
 // Auth pages
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Success from "./pages/Success";
 
 // Vault pages (protected)
 import VaultDashboard from "./pages/vault/VaultDashboard";
@@ -53,6 +54,7 @@ function Router() {
       {/* Auth Routes */}
       <Route path={"/login"} component={Login} />
       <Route path={"/signup"} component={Signup} />
+      <Route path={"/success"} component={Success} />
 
       {/* Protected Vault Routes */}
       {isAuthenticated && (
