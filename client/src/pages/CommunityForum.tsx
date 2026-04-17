@@ -38,6 +38,7 @@ export default function CommunityForum() {
   const [newPostCategory, setNewPostCategory] = useState<"insights" | "nightmares" | "rituals" | "general" | "support">("general");
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -175,13 +176,19 @@ export default function CommunityForum() {
 
   const filteredPosts = (selectedCategory === "all" 
     ? posts 
-    : posts.filter((p) => p.category === selectedCategory)).sort((a, b) => {
+    : posts.filter((p) => p.category === selectedCategory))
+    .filter((p) => {
+      if (!searchQuery.trim()) return true;
+      const query = searchQuery.toLowerCase();
+      return p.title.toLowerCase().includes(query) || p.content.toLowerCase().includes(query);
+    })
+    .sort((a, b) => {
       // Pinned posts always come first
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
       // Then sort by creation date (newest first)
       return b.createdAt - a.createdAt;
-    });
+    })
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -311,6 +318,27 @@ export default function CommunityForum() {
             </div>
           </div>
         )}
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="🔍 Search posts by title or content..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg border font-mono transition-all"
+            style={{
+              background: "rgba(0, 217, 255, 0.05)",
+              borderColor: searchQuery ? "var(--color-cyan)" : "rgba(0, 217, 255, 0.2)",
+              color: "var(--color-text-primary)",
+            }}
+          />
+          {searchQuery && (
+            <p style={{ color: "var(--color-cyan)", marginTop: "0.5rem", fontSize: "0.875rem" }}>
+              Found {filteredPosts.length} result{filteredPosts.length !== 1 ? "s" : ""}
+            </p>
+          )}
+        </div>
 
         {/* Category Filter */}
         <div className="flex gap-2 mb-8 overflow-x-auto">

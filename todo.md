@@ -156,6 +156,20 @@
 - [x] Create Getting Started pinned post with FAQs
 - [x] Add visual indicator for pinned posts (📌 icon + gold styling)
 - [x] Implement pinned post sorting (always appears at top)
-- [ ] Implement admin ability to pin/unpin posts (deferred - requires admin panel)
-- [ ] Add database persistence for pinned posts (deferred - requires backend migration)
-- [ ] Add vitest tests for pinned post functionality (deferred - requires jsdom environment setup)
+
+## DEFERRED FEATURES (Requires Backend Infrastructure)
+
+- [ ] Implement admin ability to pin/unpin posts (requires admin panel)
+- [ ] Add database persistence for pinned posts (requires backend migration)
+- [ ] Add vitest tests for pinned post functionality (requires jsdom environment setup)
+- [ ] Email notifications for forum activity (requires email service)
+- [ ] Member-submitted content moderation system (requires admin panel)
+
+
+## FORUM SEARCH FEATURE
+
+- [x] Add search bar to forum page
+- [x] Implement search filtering by post title and content
+- [x] Add real-time search result count display
+- [x] Search across all categories or within selected category
+- [ ] Add search-term highlighting in matching post titles/content (enhancement)
