@@ -46,3 +46,13 @@
   - [x] Horror Stories prompts
   - [x] Copy to clipboard functionality
   - [x] Prompt history/bookmarks (localStorage)
+
+
+## STRIPE INTEGRATION
+
+- [x] Stripe webhook endpoint (/api/webhooks/stripe)
+- [x] Handle checkout.session.completed event
+- [x] Update user role to "member" on successful payment
+- [x] Track membership tier (monthly vs lifetime) metadata
+- [x] Test webhook signature verification (4/4 tests passing)
+- [x] Add webhook error handling and logging

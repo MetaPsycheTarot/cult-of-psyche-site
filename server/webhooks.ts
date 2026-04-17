@@ -1,7 +1,9 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { getDb } from "./db";
 import { eq } from "drizzle-orm";
 import { users } from "../drizzle/schema";
+import { verifyStripeSignature } from "./_core/stripe";
+import { ENV } from "./_core/env";
 
 const router = Router();
 
@@ -14,7 +16,29 @@ const router = Router();
  * - customer.subscription.updated → update membership status
  * - customer.subscription.deleted → revoke membership access
  */
-router.post("/stripe", async (req, res) => {
+router.post("/stripe", async (req: Request, res: Response) => {
+  // Verify webhook signature
+  const signature = req.headers["stripe-signature"] as string;
+  const stripeSecret = ENV.stripeWebhookSecret;
+
+  if (!stripeSecret) {
+    console.error("[Webhook] STRIPE_WEBHOOK_SECRET not configured");
+    return res.status(500).json({ error: "Webhook secret not configured" });
+  }
+
+  if (!signature) {
+    console.warn("[Webhook] Missing Stripe signature header");
+    return res.status(401).json({ error: "Missing signature" });
+  }
+
+  const rawBody = (req as any).rawBody || JSON.stringify(req.body);
+  const isValidSignature = verifyStripeSignature(rawBody, signature, stripeSecret);
+
+  if (!isValidSignature) {
+    console.warn("[Webhook] Invalid Stripe signature");
+    return res.status(401).json({ error: "Invalid signature" });
+  }
+
   const event = req.body;
 
   try {
