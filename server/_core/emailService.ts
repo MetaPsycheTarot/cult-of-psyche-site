@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { createEmailEngagementRecord } from "../db";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -19,6 +20,7 @@ export interface EmailSendResponse {
  * Send welcome email to new user
  */
 export async function sendWelcomeEmail(
+  userId: number,
   userEmail: string,
   userName: string
 ): Promise<EmailSendResponse> {
@@ -40,8 +42,15 @@ export async function sendWelcomeEmail(
       return { success: false, error: response.error.message };
     }
 
-    console.log("[Email] Welcome email sent to:", userEmail, "ID:", response.data?.id);
-    return { success: true, emailId: response.data?.id };
+    const emailId = response.data?.id;
+    console.log("[Email] Welcome email sent to:", userEmail, "ID:", emailId);
+
+    // Create engagement record for tracking
+    if (emailId) {
+      await createEmailEngagementRecord(userId, emailId, "welcome", userEmail);
+    }
+
+    return { success: true, emailId };
   } catch (error) {
     console.error("[Email] Exception sending welcome email:", error);
     return {
@@ -55,6 +64,7 @@ export async function sendWelcomeEmail(
  * Send payment confirmation email
  */
 export async function sendPaymentConfirmationEmail(
+  userId: number,
   userEmail: string,
   userName: string,
   tier: string,
@@ -78,8 +88,15 @@ export async function sendPaymentConfirmationEmail(
       return { success: false, error: response.error.message };
     }
 
-    console.log("[Email] Payment confirmation sent to:", userEmail, "ID:", response.data?.id);
-    return { success: true, emailId: response.data?.id };
+    const emailId = response.data?.id;
+    console.log("[Email] Payment confirmation sent to:", userEmail, "ID:", emailId);
+
+    // Create engagement record for tracking
+    if (emailId) {
+      await createEmailEngagementRecord(userId, emailId, "payment_confirmation", userEmail);
+    }
+
+    return { success: true, emailId };
   } catch (error) {
     console.error("[Email] Exception sending payment confirmation:", error);
     return {
@@ -93,6 +110,7 @@ export async function sendPaymentConfirmationEmail(
  * Send referral notification email
  */
 export async function sendReferralNotificationEmail(
+  userId: number,
   userEmail: string,
   userName: string,
   referrerName: string,
@@ -120,8 +138,15 @@ export async function sendReferralNotificationEmail(
       return { success: false, error: response.error.message };
     }
 
-    console.log("[Email] Referral notification sent to:", userEmail, "ID:", response.data?.id);
-    return { success: true, emailId: response.data?.id };
+    const emailId = response.data?.id;
+    console.log("[Email] Referral notification sent to:", userEmail, "ID:", emailId);
+
+    // Create engagement record for tracking
+    if (emailId) {
+      await createEmailEngagementRecord(userId, emailId, "referral_notification", userEmail);
+    }
+
+    return { success: true, emailId };
   } catch (error) {
     console.error("[Email] Exception sending referral notification:", error);
     return {

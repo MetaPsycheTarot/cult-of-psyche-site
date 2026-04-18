@@ -701,7 +701,7 @@
 - [ ] Configure Resend dashboard to enable open and click tracking
 - [ ] Set up tracking domain CNAME records in DNS
 - [ ] Test webhook delivery with Resend test events
-- [ ] Add email engagement record creation when emails are sent
-- [ ] Create analytics dashboard page route
-- [ ] Document Resend tracking setup instructions
+- [x] Add email engagement record creation when emails are sent
+- [x] Create analytics dashboard page route
+- [x] Document Resend tracking setup instructions
 - [ ] Monitor webhook delivery and error handling

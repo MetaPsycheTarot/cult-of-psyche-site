@@ -41,10 +41,13 @@ export function registerOAuthRoutes(app: Express) {
         lastSignedIn: new Date(),
       });
 
+      // Get the user to retrieve their ID
+      const user = await db.getUserByOpenId(userInfo.openId);
+
       // Send welcome email to new users
-      if (isNewUser && userInfo.email) {
+      if (isNewUser && userInfo.email && user) {
         const userName = userInfo.name || "Seeker";
-        const emailResult = await sendWelcomeEmail(userInfo.email, userName);
+        const emailResult = await sendWelcomeEmail(user.id, userInfo.email, userName);
         if (!emailResult.success) {
           console.warn(
             "[OAuth] Failed to send welcome email:",
