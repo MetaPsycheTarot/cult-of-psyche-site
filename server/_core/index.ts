@@ -8,6 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import webhookRouter from "../webhooks";
+import { rateLimitMiddleware, startRateLimitCleanup } from "./rateLimit";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -34,6 +35,8 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // Rate limiting middleware
+  app.use(rateLimitMiddleware);
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   // Stripe webhooks under /api/webhooks
@@ -63,6 +66,9 @@ async function startServer() {
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });
+
+  // Start periodic cleanup of rate limit store
+  startRateLimitCleanup(60000); // Clean up every minute
 }
 
 startServer().catch(console.error);

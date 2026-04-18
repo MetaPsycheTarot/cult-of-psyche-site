@@ -18,7 +18,14 @@ vi.mock("../_core/llm", () => ({
 
 function createTestContext(): TrpcContext {
   return {
-    user: null,
+    user: {
+      id: "test-user-123",
+      email: "test@example.com",
+      name: "Test User",
+      role: "user",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
     req: {} as TrpcContext["req"],
     res: {} as TrpcContext["res"],
   };

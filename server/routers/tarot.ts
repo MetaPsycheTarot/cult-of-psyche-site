@@ -3,6 +3,7 @@ import { protectedProcedure, router } from "../_core/trpc";
 import { invokeLLM } from "../_core/llm";
 import { TAROT_DECK } from "../data/tarotDeck";
 import { getCardImageUrl } from "../data/tarotCardImages";
+import { cardNameToImageKey } from "../data/cardKeyConverter";
 
 export const tarotRouter = router({
   pull: protectedProcedure
@@ -70,7 +71,7 @@ export const tarotRouter = router({
       // Add image URLs to cards
       const cardsWithImages = cards.map((card) => ({
         ...card,
-        imageUrl: getCardImageUrl(card.name.toLowerCase().replace(/\s+/g, "-")),
+        imageUrl: getCardImageUrl(cardNameToImageKey(card.name, card.suit)),
       }));
 
       return {
@@ -84,14 +85,17 @@ export const tarotRouter = router({
   getCardsBySuit: protectedProcedure
     .input(z.object({ suit: z.enum(["major", "wands", "cups", "swords", "pentacles"]) }))
     .query(({ input }) => {
-      return TAROT_DECK.filter((card) => card.suit === input.suit);
+      return TAROT_DECK.filter((card) => card.suit === input.suit).map((card) => ({
+        ...card,
+        imageUrl: getCardImageUrl(cardNameToImageKey(card.name, card.suit)),
+      }));
     }),
 
   // Get all cards
   getAllCards: protectedProcedure.query(() => {
     return TAROT_DECK.map((card) => ({
       ...card,
-      imageUrl: getCardImageUrl(card.name.toLowerCase().replace(/\s+/g, "-")),
+      imageUrl: getCardImageUrl(cardNameToImageKey(card.name, card.suit)),
     }));
   }),
 
@@ -165,7 +169,7 @@ Keep it under 300 words. Use poetic language fitting the neon-noir aesthetic of 
       if (!card) return null;
       return {
         ...card,
-        imageUrl: getCardImageUrl(card.name.toLowerCase().replace(/\s+/g, "-")),
+        imageUrl: getCardImageUrl(cardNameToImageKey(card.name, card.suit)),
       };
     }),
 });
