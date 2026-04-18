@@ -268,3 +268,13 @@
 - [x] Add spread type comparison
 - [x] Implement card-by-card analysis (matching/different cards metrics)
 - [x] Add export comparison as JSON
+
+
+## AI-POWERED READING INSIGHTS
+
+- [x] Create AI analysis endpoint for comparing two readings
+- [x] Generate spiritual insights about reading relationships
+- [x] Analyze card patterns and themes across readings
+- [x] Provide guidance on interpreting reading differences
+- [x] Add AI summary to comparison page
+- [x] Cache AI insights for performance

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Download, Share2 } from 'lucide-react';
+import { ArrowLeft, Download, Share2, Sparkles, AlertCircle } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { trpc } from '@/lib/trpc';
 
 interface TarotReading {
   id: string;
   spreadType: string;
   cards: Array<{
     name: string;
-    suit?: string;
-    number?: number;
+    suit: string;
     isReversed: boolean;
   }>;
   interpretation: string;
@@ -30,6 +30,11 @@ export default function ReadingComparison() {
     differentOrientations: number;
     spreadTypes: { type1: string; type2: string };
   } | null>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<string>('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string>('');
+  const [analysisCache, setAnalysisCache] = useState<Record<string, string>>({});
+  const analyzeReadingMutation = trpc.tarot.analyzeReadingComparison.useMutation();
 
   useEffect(() => {
     if (!user) {
@@ -81,6 +86,9 @@ export default function ReadingComparison() {
             type2: reading2.spreadType,
           },
         });
+        // Reset AI analysis when readings change
+        setAiAnalysis('');
+        setAnalysisError('');
       }
     }
   }, [selectedReading1, selectedReading2, readings]);
@@ -114,6 +122,46 @@ export default function ReadingComparison() {
     link.href = url;
     link.download = `reading-comparison-${Date.now()}.json`;
     link.click();
+  };
+
+  const handleGenerateAnalysis = async () => {
+    if (!reading1 || !reading2) return;
+    
+    // Create cache key from reading IDs
+    const cacheKey = `${selectedReading1}-${selectedReading2}`;
+    
+    // Check cache first
+    if (analysisCache[cacheKey]) {
+      setAiAnalysis(analysisCache[cacheKey]);
+      setAnalysisError('');
+      return;
+    }
+    
+    setIsAnalyzing(true);
+    setAnalysisError('');
+    try {
+      const result = await analyzeReadingMutation.mutateAsync({
+        reading1: {
+          cards: reading1.cards,
+          spreadType: reading1.spreadType,
+          interpretation: reading1.interpretation,
+        },
+        reading2: {
+          cards: reading2.cards,
+          spreadType: reading2.spreadType,
+          interpretation: reading2.interpretation,
+        },
+      });
+      setAiAnalysis(result.analysis);
+      // Cache the result
+      setAnalysisCache(prev => ({ ...prev, [cacheKey]: result.analysis }));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate analysis. Please try again.';
+      setAnalysisError(errorMessage);
+      console.error('Failed to analyze readings:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
@@ -281,6 +329,45 @@ export default function ReadingComparison() {
                 <h3 className="text-lg font-bold text-pink-400 mb-4">INTERPRETATION</h3>
                 <p className="text-gray-300 leading-relaxed">{reading2.interpretation}</p>
               </div>
+            </div>
+
+            {/* AI Analysis Section */}
+            <div className="mt-8">
+              <button
+                onClick={handleGenerateAnalysis}
+                disabled={isAnalyzing}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-all font-semibold mb-4"
+              >
+                <Sparkles className="w-5 h-5" />
+                {isAnalyzing ? 'Analyzing...' : 'Generate AI Insights'}
+              </button>
+
+              {analysisError && (
+                <div className="bg-red-900/30 border border-red-500/50 rounded-lg p-4 mb-4 flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-red-400 font-semibold mb-1">Analysis Failed</h4>
+                    <p className="text-red-300/80 text-sm">{analysisError}</p>
+                    <button
+                      onClick={handleGenerateAnalysis}
+                      disabled={isAnalyzing}
+                      className="mt-2 text-sm text-red-400 hover:text-red-300 underline disabled:opacity-50"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {aiAnalysis && (
+                <div className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 border border-purple-500/50 rounded-lg p-6">
+                  <h3 className="text-lg font-bold text-purple-400 mb-4 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5" />
+                    MYSTICAL INSIGHTS
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed">{aiAnalysis}</p>
+                </div>
+              )}
             </div>
           </>
         )}
