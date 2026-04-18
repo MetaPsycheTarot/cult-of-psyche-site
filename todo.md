@@ -225,3 +225,12 @@
 - [x] Add guidance prompts for reading interpretation
 - [x] Add reading statistics and insights (card count, spread type)
 - [x] Create visual card animations for pulls (card flip + reveal animations with staggered timing)
+
+
+## UPRIGHT/REVERSED CARD MEANINGS
+
+- [x] Add upright/reversed orientation to tarot cards (50% random assignment)
+- [x] Create reversed meaning interpretations for all 78 cards (via AI prompt)
+- [x] Randomly determine card orientation during pulls
+- [x] Display orientation indicator (upright/reversed) on cards (⬆ UPRIGHT / ⬇ REVERSED)
+- [x] Update AI interpretation to include reversed meanings (shadow meanings in prompt)

@@ -11,7 +11,7 @@ interface TarotCardType {
   meaning: string;
   interpretation: string;
   imageUrl?: string;
-  reversed?: boolean;
+  isReversed?: boolean;
 }
 
 interface SavedReading {
@@ -412,6 +412,9 @@ export default function TarotPull() {
                       </p>
                       <p className="text-xs mb-1" style={{ color: "var(--color-text-secondary)" }}>
                         {card.suit.charAt(0).toUpperCase() + card.suit.slice(1)} {card.number}
+                      </p>
+                      <p className="text-xs font-bold mb-1" style={{ color: card.isReversed ? "var(--color-hot-pink)" : "var(--color-cyan)" }}>
+                        {card.isReversed ? "⬇ REVERSED" : "⬆ UPRIGHT"}
                       </p>
                       <p className="text-xs" style={{ color: "var(--color-cyan)" }}>
                         {card.meaning}

@@ -26,19 +26,27 @@ export const tarotRouter = router({
       const cards = [];
       const shuffled = [...availableCards].sort(() => Math.random() - 0.5);
       for (let i = 0; i < count && i < shuffled.length; i++) {
-        cards.push(shuffled[i]!);
+        const card = shuffled[i]!;
+        // Randomly determine if card is reversed (50% chance)
+        const isReversed = Math.random() > 0.5;
+        cards.push({
+          ...card,
+          isReversed,
+        });
       }
 
       // Generate AI interpretation
-      const cardNames = cards.map((c) => c.name).join(", ");
+      const cardNames = cards.map((c) => `${c.name}${c.isReversed ? " (Reversed)" : ""}`).join(", ");
       const cardMeanings = cards
-        .map((c) => `${c.name} (${c.suit}): ${c.meaning}`)
+        .map((c) => `${c.name}${c.isReversed ? " (Reversed)" : ""} (${c.suit}): ${c.meaning}`)
         .join("\n");
 
+      const reversedInfo = cards.map((c) => c.isReversed ? `${c.name} is REVERSED - consider shadow meanings, inversions, and challenges` : `${c.name} is UPRIGHT - consider direct meanings and positive aspects`).join("\n");
+      
       const prompt =
         input.question
-          ? `You are a mystical tarot reader for the Cult of Psyche. A member asks: "${input.question}"\n\nThey drew: ${cardNames}\n\nCard meanings:\n${cardMeanings}\n\nProvide a brief, mysterious, and insightful interpretation that connects these cards to their question. Keep it under 250 words. Use poetic language that fits the neon-noir aesthetic of the Cult of Psyche. Reference the show, community, or occult themes when relevant.`
-          : `You are a mystical tarot reader for the Cult of Psyche. A member drew: ${cardNames}\n\nCard meanings:\n${cardMeanings}\n\nProvide a brief, mysterious, and insightful interpretation of what these cards reveal. Keep it under 250 words. Use poetic language that fits the neon-noir aesthetic of the Cult of Psyche. Reference the show, community, or occult themes when relevant.`;
+          ? `You are a mystical tarot reader for the Cult of Psyche. A member asks: "${input.question}"\n\nThey drew: ${cardNames}\n\nCard meanings:\n${cardMeanings}\n\nCard Orientations (Upright/Reversed):\n${reversedInfo}\n\nProvide a brief, mysterious, and insightful interpretation that connects these cards to their question. Pay special attention to reversed cards as they carry shadow meanings, inversions, and hidden challenges. Upright cards show direct meanings and positive aspects. Keep it under 250 words. Use poetic language that fits the neon-noir aesthetic of the Cult of Psyche. Reference the show, community, or occult themes when relevant.`
+          : `You are a mystical tarot reader for the Cult of Psyche. A member drew: ${cardNames}\n\nCard meanings:\n${cardMeanings}\n\nCard Orientations (Upright/Reversed):\n${reversedInfo}\n\nProvide a brief, mysterious, and insightful interpretation of what these cards reveal. Pay special attention to reversed cards as they carry shadow meanings, inversions, and hidden challenges. Upright cards show direct meanings and positive aspects. Keep it under 250 words. Use poetic language that fits the neon-noir aesthetic of the Cult of Psyche. Reference the show, community, or occult themes when relevant.`;
 
       const response = await invokeLLM({
         messages: [
