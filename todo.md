@@ -256,3 +256,15 @@
 - [x] Create forum post from reading share (auto-posts to forum)
 - [x] Add date range picker to dashboard (start/end date inputs)
 - [x] Implement custom date filtering for statistics (dynamic filtering)
+
+
+## READING COMPARISON FEATURE
+
+- [x] Create /dashboard/compare route for reading comparison
+- [x] Add reading selection dropdowns to choose two readings
+- [x] Display side-by-side card layouts for both readings
+- [x] Show card differences highlighted (different cards, orientations)
+- [x] Compare interpretations and show key differences
+- [x] Add spread type comparison
+- [x] Implement card-by-card analysis (matching/different cards metrics)
+- [x] Add export comparison as JSON

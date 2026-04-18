@@ -116,13 +116,22 @@ export default function ReadingsDashboard() {
   return (
     <div className="min-h-screen p-8" style={{ background: "var(--color-midnight)" }}>
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2" style={{ color: "var(--color-hot-pink)" }}>
-            📊 READING STATISTICS
-          </h1>
-          <p style={{ color: "var(--color-text-secondary)" }}>
-            Track your tarot reading history and discover patterns in your spiritual journey
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2" style={{ color: "var(--color-hot-pink)" }}>
+              📊 READING STATISTICS
+            </h1>
+            <p style={{ color: "var(--color-text-secondary)" }}>
+              Track your tarot reading history and discover patterns in your spiritual journey
+            </p>
+          </div>
+          <button
+            onClick={() => navigate("/dashboard/compare")}
+            className="px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+            style={{ background: "rgba(255, 20, 147, 0.2)", color: "var(--color-hot-pink)", border: "1px solid rgba(255, 20, 147, 0.3)" }}
+          >
+            🔄 Compare Readings
+          </button>
         </div>
 
         {/* Date Range Filter */}
