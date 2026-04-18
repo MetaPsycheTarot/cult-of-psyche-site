@@ -39,6 +39,8 @@ import CommunityForum from "./pages/CommunityForum";
 import Leaderboard from "./pages/Leaderboard";
 import ReadingsDashboard from "./pages/ReadingsDashboard";
 import ReadingComparison from "./pages/ReadingComparison";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import ReferralProgram from "./pages/ReferralProgram";
 
 function Router() {
   const { isAuthenticated, loading } = useAuth();
@@ -76,6 +78,8 @@ function Router() {
           <Route path={"/leaderboard"} component={Leaderboard} />
           <Route path={"/dashboard/readings"} component={ReadingsDashboard} />
           <Route path={"/dashboard/compare"} component={ReadingComparison} />
+          <Route path={"/dashboard/analytics"} component={AnalyticsDashboard} />
+          <Route path={"/referral"} component={ReferralProgram} />
           <Route path={"/vault"} component={VaultDashboard} />
           <Route path={"/vault/latest-drops"} component={VaultLatestDrops} />
           <Route path={"/vault/content"} component={VaultContent} />

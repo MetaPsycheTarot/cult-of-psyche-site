@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import { Zap, Film, Sparkles, Archive, LogOut, Wand2, BookOpen, Image, TrendingUp } from "lucide-react";
+import { Zap, Film, Sparkles, Archive, LogOut, Wand2, BookOpen, Image, TrendingUp, BarChart3, Gift } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 
@@ -12,6 +12,8 @@ const navItems = [
   { label: "Gallery", path: "/vault/gallery", icon: Image },
   { label: "Archive", path: "/vault/archive", icon: Archive },
   { label: "Statistics", path: "/dashboard/readings", icon: TrendingUp },
+  { label: "Analytics", path: "/dashboard/analytics", icon: BarChart3 },
+  { label: "Referral", path: "/referral", icon: Gift },
 ];
 
 export function VaultSidebar() {
