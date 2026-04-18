@@ -175,12 +175,29 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Manus Link */}
+          {/* Community & Platform */}
           <div>
             <h4 className="font-bold mb-4" style={{ color: "var(--color-cyan)" }}>
-              Platform
+              Community
             </h4>
             <ul className="space-y-2">
+              <li>
+                <a
+                  href="https://discord.gg/qU7SdW3PYX"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors"
+                  style={{ color: "var(--color-text-secondary)" }}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLElement).style.color = "var(--color-cyan)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLElement).style.color = "var(--color-text-secondary)";
+                  }}
+                >
+                  Discord Server
+                </a>
+              </li>
               <li>
                 <a
                   href="https://manus.im/invitation/P4XTUC2KYD0P4VT?utm_source=invitation&utm_medium=social&utm_campaign=copy_link"
