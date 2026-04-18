@@ -380,3 +380,59 @@
 - [ ] Verify HTTPS usage
 - [ ] Test CSRF protection
 - [ ] Verify input sanitization
+
+
+## STRATEGIC EXECUTION PLAN - PHASE 0: SESSION MEMORY LAYER (CRITICAL)
+
+- [ ] Create interpretation memory system (foundational)
+- [ ] Add interpretation_cache table to database schema
+- [ ] Implement cache key generation (hash of reading + spread)
+- [ ] Create interpretation embedding system
+- [ ] Add pattern clustering for similar readings
+- [ ] Create useInterpretationMemory hook for frontend
+
+## STRATEGIC EXECUTION PLAN - PHASE 1: STABILIZE CORE
+
+- [ ] Fix tarot test suite authentication (5 tests)
+- [ ] Fix archive storage test isolation (2-3 tests)
+- [ ] Fix tarot card image URLs (2 tests)
+- [ ] Implement rate limiting (per-user + per-IP)
+- [ ] Add input validation with Zod schemas
+- [ ] Sanitize user-generated content
+
+## STRATEGIC EXECUTION PLAN - PHASE 2: SPEED + FEEL
+
+- [ ] Implement LLM response caching with Redis
+- [ ] Add "Regenerate" button for fresh analysis
+- [ ] Convert tarot cards to WebP format
+- [ ] Implement lazy loading for images
+- [ ] Compress images to 50KB per card
+- [ ] Implement code splitting with React.lazy()
+- [ ] Add loading skeletons for chunks
+
+## STRATEGIC EXECUTION PLAN - PHASE 3: CONVERSION ENGINE
+
+- [ ] Create subscription tier system (Free/Pro/Premium)
+- [ ] Implement feature gating by tier
+- [ ] Add usage limits per tier
+- [ ] Create PDF export functionality
+- [ ] Add custom branding to PDF exports
+- [ ] Implement personalized recommendations
+- [ ] Create recommendation UI component
+
+## STRATEGIC EXECUTION PLAN - PHASE 4: IDENTITY LAYER
+
+- [ ] Create ritualized loading animations
+- [ ] Implement symbolic feedback system
+- [ ] Add narrative progression tracking
+- [ ] Create progression UI indicators
+- [ ] Implement feature unlocking by progression level
+- [ ] Add symbolic notification messages
+- [ ] Create mythological voice guidelines
+
+## STRATEGIC EXECUTION PLAN - PHASE 5: EXPANSION
+
+- [ ] Real-time collaboration for shared readings
+- [ ] Mobile app (React Native)
+- [ ] Advanced analytics dashboard
+- [ ] Referral program system
