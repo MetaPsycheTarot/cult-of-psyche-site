@@ -9,13 +9,19 @@ export interface EmailOptions {
   from?: string;
 }
 
+export interface EmailSendResponse {
+  success: boolean;
+  emailId?: string;
+  error?: string;
+}
+
 /**
  * Send welcome email to new user
  */
 export async function sendWelcomeEmail(
   userEmail: string,
   userName: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<EmailSendResponse> {
   try {
     const html = generateWelcomeEmailHTML(userName);
 
@@ -24,6 +30,9 @@ export async function sendWelcomeEmail(
       to: userEmail,
       subject: "Welcome to the Cult of Psyche 🔮",
       html,
+      headers: {
+        "X-Entity-Ref-ID": `welcome-${Date.now()}`,
+      },
     });
 
     if (response.error) {
@@ -32,7 +41,7 @@ export async function sendWelcomeEmail(
     }
 
     console.log("[Email] Welcome email sent to:", userEmail, "ID:", response.data?.id);
-    return { success: true };
+    return { success: true, emailId: response.data?.id };
   } catch (error) {
     console.error("[Email] Exception sending welcome email:", error);
     return {
@@ -50,7 +59,7 @@ export async function sendPaymentConfirmationEmail(
   userName: string,
   tier: string,
   amount: number
-): Promise<{ success: boolean; error?: string }> {
+): Promise<EmailSendResponse> {
   try {
     const html = generatePaymentConfirmationHTML(userName, tier, amount);
 
@@ -59,6 +68,9 @@ export async function sendPaymentConfirmationEmail(
       to: userEmail,
       subject: "Payment Confirmed - Welcome to the Inner Circle 💎",
       html,
+      headers: {
+        "X-Entity-Ref-ID": `payment-${Date.now()}`,
+      },
     });
 
     if (response.error) {
@@ -66,8 +78,8 @@ export async function sendPaymentConfirmationEmail(
       return { success: false, error: response.error.message };
     }
 
-    console.log("[Email] Payment confirmation sent to:", userEmail);
-    return { success: true };
+    console.log("[Email] Payment confirmation sent to:", userEmail, "ID:", response.data?.id);
+    return { success: true, emailId: response.data?.id };
   } catch (error) {
     console.error("[Email] Exception sending payment confirmation:", error);
     return {
@@ -85,7 +97,7 @@ export async function sendReferralNotificationEmail(
   userName: string,
   referrerName: string,
   rewardAmount: number
-): Promise<{ success: boolean; error?: string }> {
+): Promise<EmailSendResponse> {
   try {
     const html = generateReferralNotificationHTML(
       userName,
@@ -98,6 +110,9 @@ export async function sendReferralNotificationEmail(
       to: userEmail,
       subject: `${referrerName} invited you to the Cult of Psyche 🌙`,
       html,
+      headers: {
+        "X-Entity-Ref-ID": `referral-${Date.now()}`,
+      },
     });
 
     if (response.error) {
@@ -105,8 +120,8 @@ export async function sendReferralNotificationEmail(
       return { success: false, error: response.error.message };
     }
 
-    console.log("[Email] Referral notification sent to:", userEmail);
-    return { success: true };
+    console.log("[Email] Referral notification sent to:", userEmail, "ID:", response.data?.id);
+    return { success: true, emailId: response.data?.id };
   } catch (error) {
     console.error("[Email] Exception sending referral notification:", error);
     return {

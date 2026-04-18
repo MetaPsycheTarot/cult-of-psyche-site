@@ -15,6 +15,13 @@
       "when": 1776487866490,
       "tag": "0001_steady_the_spike",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1776536023964,
+      "tag": "0002_short_wildside",
+      "breakpoints": true
     }
   ]
 }

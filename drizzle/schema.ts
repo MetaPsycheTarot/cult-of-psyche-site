@@ -103,3 +103,28 @@ export const readingRecommendations = mysqlTable("reading_recommendations", {
 
 export type ReadingRecommendation = typeof readingRecommendations.$inferSelect;
 export type InsertReadingRecommendation = typeof readingRecommendations.$inferInsert;
+/**
+ * Email engagement metrics for tracking opens and clicks
+ */
+export const emailEngagementMetrics = mysqlTable("email_engagement_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  emailId: varchar("emailId", { length: 255 }).notNull(), // Resend email ID
+  emailType: mysqlEnum("emailType", ["welcome", "payment_confirmation", "referral_notification"]).notNull(),
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  sentAt: timestamp("sentAt").notNull(),
+  deliveredAt: timestamp("deliveredAt"),
+  openedAt: timestamp("openedAt"),
+  openCount: int("openCount").default(0),
+  clickCount: int("clickCount").default(0),
+  lastClickedAt: timestamp("lastClickedAt"),
+  bounced: boolean("bounced").default(false),
+  complained: boolean("complained").default(false),
+  failed: boolean("failed").default(false),
+  failureReason: text("failureReason"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmailEngagementMetric = typeof emailEngagementMetrics.$inferSelect;
+export type InsertEmailEngagementMetric = typeof emailEngagementMetrics.$inferInsert;
