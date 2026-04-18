@@ -290,3 +290,12 @@
 - [x] Add search functionality for comparison analyses
 - [x] Implement export for comparison analyses
 - [x] Add vitest tests for comparison analysis storage and retrieval
+
+
+## COMPARISON ANALYSES FORUM SHARING
+
+- [x] Create forum post helper for comparison analyses
+- [x] Add 'Share to Forum' button to Archive comparison items
+- [x] Implement share modal with preview and customization
+- [x] Add forum post creation and success feedback
+- [x] Write vitest tests for forum sharing functionality

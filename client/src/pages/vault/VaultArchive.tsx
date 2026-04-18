@@ -2,9 +2,10 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import { VaultSidebar } from "@/components/VaultSidebar";
-import { ChevronDown, Download, Trash2, Search, Sparkles } from "lucide-react";
+import { ChevronDown, Download, Trash2, Search, Sparkles, Share2, CheckCircle } from "lucide-react";
 import { getComparisonAnalysesSorted, deleteComparisonAnalysis } from "@/lib/comparisonAnalysisStorage";
 import type { ComparisonAnalysis } from "@/lib/comparisonAnalysisStorage";
+import { createComparisonForumPost, saveForumPost, isComparisonAlreadyShared } from "@/lib/forumSharingHelper";
 
 interface ArchiveItem {
   id: string;
@@ -17,13 +18,20 @@ interface ArchiveItem {
 }
 
 export default function VaultArchive() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [, navigate] = useLocation();
   const [archiveItems, setArchiveItems] = useState<ArchiveItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<ArchiveItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<"all" | "nightmare" | "reading" | "prompt" | "comparison">("all");
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [selectedComparisonForShare, setSelectedComparisonForShare] = useState<ComparisonAnalysis | null>(null);
+  const [shareTitle, setShareTitle] = useState("");
+  const [shareContent, setShareContent] = useState("");
+  const [isSharing, setIsSharing] = useState(false);
+  const [shareSuccess, setShareSuccess] = useState(false);
+  const [alreadySharedComparisons, setAlreadySharedComparisons] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -100,6 +108,42 @@ export default function VaultArchive() {
 
     setFilteredItems(filtered);
   }, [archiveItems, searchQuery, selectedFilter]);
+
+  const handleShareToForum = (comparison: ComparisonAnalysis) => {
+    setSelectedComparisonForShare(comparison);
+    setShareTitle(`Tarot Comparison: ${comparison.reading1SpreadType} ↔ ${comparison.reading2SpreadType}`);
+    setShareContent("");
+    setShowShareModal(true);
+  };
+
+  const handleConfirmShare = async () => {
+    if (!selectedComparisonForShare || !user) return;
+    
+    setIsSharing(true);
+    try {
+      const forumPost = createComparisonForumPost(
+        selectedComparisonForShare,
+        user.name || "Anonymous",
+        (user.id || "unknown").toString(),
+        shareTitle || undefined,
+        shareContent || undefined
+      );
+      
+      const success = saveForumPost(forumPost);
+      if (success) {
+        setAlreadySharedComparisons(prev => new Set(Array.from(prev).concat([selectedComparisonForShare.id])));
+        setShareSuccess(true);
+        setTimeout(() => {
+          setShowShareModal(false);
+          setShareSuccess(false);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Failed to share to forum:', error);
+    } finally {
+      setIsSharing(false);
+    }
+  };
 
   const handleDelete = (id: string, storageKey?: string) => {
     const itemToDelete = archiveItems.find((item) => item.id === id);
@@ -402,6 +446,34 @@ export default function VaultArchive() {
 
                     {/* Actions */}
                     <div className="flex gap-2">
+                      {item.type === "comparison" && (
+                        <button
+                          onClick={() => handleShareToForum(item.metadata as ComparisonAnalysis)}
+                          disabled={alreadySharedComparisons.has(item.id)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all"
+                          style={{
+                            background: alreadySharedComparisons.has(item.id) 
+                              ? "rgba(167, 139, 250, 0.1)" 
+                              : "rgba(0, 217, 255, 0.1)",
+                            color: alreadySharedComparisons.has(item.id) 
+                              ? "#a78bfa" 
+                              : "var(--color-cyan)",
+                            opacity: alreadySharedComparisons.has(item.id) ? 0.6 : 1,
+                          }}
+                        >
+                          {alreadySharedComparisons.has(item.id) ? (
+                            <>
+                              <CheckCircle size={16} />
+                              Shared
+                            </>
+                          ) : (
+                            <>
+                              <Share2 size={16} />
+                              Share to Forum
+                            </>
+                          )}
+                        </button>
+                      )}
                       <button
                         onClick={() => handleDelete(item.id, item.storageKey)}
                         className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all"
@@ -451,6 +523,124 @@ export default function VaultArchive() {
             to keep a backup or share insights with trusted members.
           </p>
         </div>
+
+        {/* Share to Forum Modal */}
+        {showShareModal && selectedComparisonForShare && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={() => !isSharing && setShowShareModal(false)}
+          >
+            <div
+              className="bg-midnight rounded-lg border p-6 max-w-2xl w-full max-h-96 overflow-y-auto"
+              style={{ borderColor: "rgba(0, 217, 255, 0.3)" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
+                Share to Community Forum
+              </h2>
+
+              {shareSuccess ? (
+                <div className="text-center py-8">
+                  <CheckCircle size={48} style={{ color: "#a78bfa", margin: "0 auto mb-4" }} />
+                  <p style={{ color: "#a78bfa" }} className="text-lg font-semibold">
+                    Successfully shared to the forum!
+                  </p>
+                  <p style={{ color: "var(--color-text-secondary)" }} className="text-sm mt-2">
+                    Your comparison analysis is now visible to the community.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-4 mb-6">
+                    <div>
+                      <label style={{ color: "var(--color-cyan)" }} className="block text-sm font-semibold mb-2">
+                        Post Title
+                      </label>
+                      <input
+                        type="text"
+                        value={shareTitle}
+                        onChange={(e) => setShareTitle(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg"
+                        style={{
+                          background: "rgba(0, 217, 255, 0.05)",
+                          border: "1px solid rgba(0, 217, 255, 0.2)",
+                          color: "var(--color-text-primary)",
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ color: "var(--color-cyan)" }} className="block text-sm font-semibold mb-2">
+                        Additional Comments (Optional)
+                      </label>
+                      <textarea
+                        value={shareContent}
+                        onChange={(e) => setShareContent(e.target.value)}
+                        placeholder="Add your thoughts or questions about this comparison..."
+                        className="w-full px-3 py-2 rounded-lg h-24 resize-none"
+                        style={{
+                          background: "rgba(0, 217, 255, 0.05)",
+                          border: "1px solid rgba(0, 217, 255, 0.2)",
+                          color: "var(--color-text-primary)",
+                        }}
+                      />
+                    </div>
+
+                    <div
+                      className="p-4 rounded-lg"
+                      style={{
+                        background: "rgba(167, 139, 250, 0.05)",
+                        border: "1px solid rgba(167, 139, 250, 0.2)",
+                      }}
+                    >
+                      <p style={{ color: "#a78bfa" }} className="text-sm font-semibold mb-2">
+                        Preview:
+                      </p>
+                      <p style={{ color: "var(--color-text-secondary)" }} className="text-xs whitespace-pre-wrap">
+                        {`Tarot Comparison: ${selectedComparisonForShare.reading1SpreadType} ↔ ${selectedComparisonForShare.reading2SpreadType}\n\nMatching Cards: ${selectedComparisonForShare.matchingCards}\n${shareContent ? `\nThoughts: ${shareContent}` : ''}`}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 justify-end">
+                    <button
+                      onClick={() => setShowShareModal(false)}
+                      disabled={isSharing}
+                      className="px-4 py-2 rounded-lg font-semibold transition-all"
+                      style={{
+                        background: "rgba(255, 20, 147, 0.1)",
+                        color: "var(--color-hot-pink)",
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleConfirmShare}
+                      disabled={isSharing || !shareTitle.trim()}
+                      className="px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2"
+                      style={{
+                        background: isSharing || !shareTitle.trim() ? "rgba(0, 217, 255, 0.2)" : "rgba(0, 217, 255, 0.1)",
+                        color: isSharing || !shareTitle.trim() ? "rgba(0, 217, 255, 0.5)" : "var(--color-cyan)",
+                      }}
+                    >
+                      {isSharing ? (
+                        <>
+                          <Sparkles size={16} className="animate-spin" />
+                          Sharing...
+                        </>
+                      ) : (
+                        <>
+                          <Share2 size={16} />
+                          Share to Forum
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
