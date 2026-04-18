@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, desc, gte, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, emailEngagementMetrics } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -95,8 +95,7 @@ export async function getUserByOpenId(openId: string) {
  * Email Analytics Helpers
  */
 
-import { emailEngagementMetrics } from "../drizzle/schema";
-import { desc, sum, count, and, gte } from "drizzle-orm";
+import { sum, count } from "drizzle-orm";
 
 export async function getEmailAnalytics(userId: number) {
   const db = await getDb();
@@ -234,5 +233,221 @@ export async function createEmailEngagementRecord(
   } catch (error) {
     console.error("[Database] Failed to create email engagement record:", error);
     return null;
+  }
+}
+
+
+/**
+ * Get user engagement metrics for all users (admin view)
+ */
+export async function getUserEngagementMetrics() {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get user engagement metrics: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select({
+        userId: emailEngagementMetrics.userId,
+        userName: users.name,
+        userEmail: users.email,
+        totalEmails: sql<number>`COUNT(*)`,
+        totalOpens: sql<number>`SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END)`,
+        totalClicks: sql<number>`SUM(${emailEngagementMetrics.clickCount})`,
+        avgOpenCount: sql<number>`AVG(${emailEngagementMetrics.openCount})`,
+        avgClickCount: sql<number>`AVG(${emailEngagementMetrics.clickCount})`,
+        openRate: sql<number>`ROUND(SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1)`,
+        clickRate: sql<number>`ROUND(SUM(${emailEngagementMetrics.clickCount}) * 100.0 / COUNT(*), 1)`,
+        lastEngagementAt: sql<Date>`MAX(COALESCE(${emailEngagementMetrics.lastClickedAt}, ${emailEngagementMetrics.openedAt}))`,
+      })
+      .from(emailEngagementMetrics)
+      .leftJoin(users, eq(emailEngagementMetrics.userId, users.id))
+      .groupBy(emailEngagementMetrics.userId, users.id, users.name, users.email)
+      .orderBy(desc(sql`SUM(${emailEngagementMetrics.clickCount})`));
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get user engagement metrics:", error);
+    return [];
+  }
+}
+
+/**
+ * Get top engaged users (ranked by opens and clicks)
+ */
+export async function getTopEngagedUsers(limit: number = 10) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get top engaged users: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select({
+        userId: emailEngagementMetrics.userId,
+        userName: users.name,
+        userEmail: users.email,
+        totalEmails: sql<number>`COUNT(*)`,
+        totalOpens: sql<number>`SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END)`,
+        totalClicks: sql<number>`SUM(${emailEngagementMetrics.clickCount})`,
+        openRate: sql<number>`ROUND(SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1)`,
+        clickRate: sql<number>`ROUND(SUM(${emailEngagementMetrics.clickCount}) * 100.0 / COUNT(*), 1)`,
+        engagementScore: sql<number>`SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END) + SUM(${emailEngagementMetrics.clickCount}) * 2`,
+      })
+      .from(emailEngagementMetrics)
+      .leftJoin(users, eq(emailEngagementMetrics.userId, users.id))
+      .groupBy(emailEngagementMetrics.userId, users.id, users.name, users.email)
+      .orderBy(desc(sql`SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END) + SUM(${emailEngagementMetrics.clickCount}) * 2`))
+      .limit(limit);
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get top engaged users:", error);
+    return [];
+  }
+}
+
+/**
+ * Get detailed engagement history for a specific user
+ */
+export async function getUserEngagementHistory(userId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get user engagement history: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select({
+        id: emailEngagementMetrics.id,
+        emailId: emailEngagementMetrics.emailId,
+        emailType: emailEngagementMetrics.emailType,
+        recipientEmail: emailEngagementMetrics.recipientEmail,
+        sentAt: emailEngagementMetrics.sentAt,
+        deliveredAt: emailEngagementMetrics.deliveredAt,
+        openedAt: emailEngagementMetrics.openedAt,
+        openCount: emailEngagementMetrics.openCount,
+        clickCount: emailEngagementMetrics.clickCount,
+        lastClickedAt: emailEngagementMetrics.lastClickedAt,
+        bounced: emailEngagementMetrics.bounced,
+        complained: emailEngagementMetrics.complained,
+        failed: emailEngagementMetrics.failed,
+      })
+      .from(emailEngagementMetrics)
+      .where(eq(emailEngagementMetrics.userId, userId))
+      .orderBy(desc(emailEngagementMetrics.sentAt))
+      .limit(limit);
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get user engagement history:", error);
+    return [];
+  }
+}
+
+/**
+ * Get user engagement stats for a specific user
+ */
+export async function getUserEngagementStats(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get user engagement stats: database not available");
+    return null;
+  }
+
+  try {
+    const result = await db
+      .select({
+        userId: emailEngagementMetrics.userId,
+        totalEmails: sql<number>`COUNT(*)`,
+        totalOpens: sql<number>`SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END)`,
+        totalClicks: sql<number>`SUM(${emailEngagementMetrics.clickCount})`,
+        avgOpenCount: sql<number>`AVG(${emailEngagementMetrics.openCount})`,
+        avgClickCount: sql<number>`AVG(${emailEngagementMetrics.clickCount})`,
+        openRate: sql<number>`ROUND(SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1)`,
+        clickRate: sql<number>`ROUND(SUM(${emailEngagementMetrics.clickCount}) * 100.0 / COUNT(*), 1)`,
+        lastEngagementAt: sql<Date>`MAX(COALESCE(${emailEngagementMetrics.lastClickedAt}, ${emailEngagementMetrics.openedAt}))`,
+        bounceCount: sql<number>`SUM(CASE WHEN ${emailEngagementMetrics.bounced} = true THEN 1 ELSE 0 END)`,
+        complaintCount: sql<number>`SUM(CASE WHEN ${emailEngagementMetrics.complained} = true THEN 1 ELSE 0 END)`,
+      })
+      .from(emailEngagementMetrics)
+      .where(eq(emailEngagementMetrics.userId, userId))
+      .groupBy(emailEngagementMetrics.userId);
+
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to get user engagement stats:", error);
+    return null;
+  }
+}
+
+/**
+ * Get engagement metrics by email type for a specific user
+ */
+export async function getUserEngagementByEmailType(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get user engagement by email type: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select({
+        emailType: emailEngagementMetrics.emailType,
+        totalEmails: sql<number>`COUNT(*)`,
+        totalOpens: sql<number>`SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END)`,
+        totalClicks: sql<number>`SUM(${emailEngagementMetrics.clickCount})`,
+        openRate: sql<number>`ROUND(SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1)`,
+        clickRate: sql<number>`ROUND(SUM(${emailEngagementMetrics.clickCount}) * 100.0 / COUNT(*), 1)`,
+      })
+      .from(emailEngagementMetrics)
+      .where(eq(emailEngagementMetrics.userId, userId))
+      .groupBy(emailEngagementMetrics.emailType)
+      .orderBy(desc(sql`COUNT(*)`));
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get user engagement by email type:", error);
+    return [];
+  }
+}
+
+/**
+ * Get engagement trends for a user over time
+ */
+export async function getUserEngagementTrends(userId: number, days: number = 30) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get user engagement trends: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select({
+        date: sql<string>`DATE(${emailEngagementMetrics.sentAt})`,
+        emailCount: sql<number>`COUNT(*)`,
+        openCount: sql<number>`SUM(CASE WHEN ${emailEngagementMetrics.openCount} > 0 THEN 1 ELSE 0 END)`,
+        clickCount: sql<number>`SUM(${emailEngagementMetrics.clickCount})`,
+      })
+      .from(emailEngagementMetrics)
+      .where(
+        and(
+          eq(emailEngagementMetrics.userId, userId),
+          gte(emailEngagementMetrics.sentAt, sql`DATE_SUB(NOW(), INTERVAL ${days} DAY)`)
+        )
+      )
+      .groupBy(sql`DATE(${emailEngagementMetrics.sentAt})`)
+      .orderBy(sql`DATE(${emailEngagementMetrics.sentAt})`);
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get user engagement trends:", error);
+    return [];
   }
 }

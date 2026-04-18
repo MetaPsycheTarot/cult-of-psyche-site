@@ -705,3 +705,29 @@
 - [x] Create analytics dashboard page route
 - [x] Document Resend tracking setup instructions
 - [ ] Monitor webhook delivery and error handling
+
+
+## USER ENGAGEMENT REPORT (NEW)
+
+### Database & Backend
+- [x] Create user engagement analytics queries in db.ts
+- [x] Add user engagement tRPC procedures
+- [x] Implement user ranking calculations
+- [x] Create detailed user engagement metrics queries
+
+### Frontend Dashboard
+- [x] Create User Engagement Report component
+- [x] Build user engagement rankings table
+- [x] Add user engagement charts and visualizations
+- [x] Implement user detail view with email history
+- [x] Add filtering and sorting options
+
+### Testing
+- [x] Write tests for user engagement queries
+- [x] Write tests for user engagement procedures
+- [x] Test user ranking calculations
+
+### Reporting Features
+- [ ] Add export functionality for engagement reports
+- [ ] Create email activity timeline by user
+- [ ] Add engagement trend analysis

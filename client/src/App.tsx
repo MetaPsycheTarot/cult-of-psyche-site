@@ -41,6 +41,7 @@ import ReadingsDashboard from "./pages/ReadingsDashboard";
 import ReadingComparison from "./pages/ReadingComparison";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import EmailAnalyticsDashboard from "./pages/EmailAnalyticsDashboard";
+import UserEngagementReport from "./pages/UserEngagementReport";
 import ReferralProgram from "./pages/ReferralProgram";
 
 function Router() {
@@ -81,6 +82,7 @@ function Router() {
           <Route path={"/dashboard/compare"} component={ReadingComparison} />
           <Route path={"/dashboard/analytics"} component={AnalyticsDashboard} />
           <Route path={"/dashboard/email-analytics"} component={EmailAnalyticsDashboard} />
+          <Route path={"/dashboard/user-engagement"} component={UserEngagementReport} />
           <Route path={"/referral"} component={ReferralProgram} />
           <Route path={"/vault"} component={VaultDashboard} />
           <Route path={"/vault/latest-drops"} component={VaultLatestDrops} />
