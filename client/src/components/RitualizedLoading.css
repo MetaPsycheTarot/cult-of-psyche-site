@@ -1,0 +1,473 @@
+/* Ritualized Loading Styles */
+
+.ritualized-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0a0e27 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.ritual-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Mystical Rings */
+.mystical-ring {
+  position: absolute;
+  border: 2px solid;
+  border-radius: 50%;
+  animation: rotate-ring 8s linear infinite;
+}
+
+.outer-ring {
+  width: 280px;
+  height: 280px;
+  border-color: rgba(236, 72, 153, 0.3);
+  animation-duration: 12s;
+  animation-direction: reverse;
+}
+
+.middle-ring {
+  width: 200px;
+  height: 200px;
+  border-color: rgba(34, 211, 238, 0.5);
+  animation-duration: 8s;
+}
+
+@keyframes rotate-ring {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ritual Core */
+.ritual-core {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.symbolic-center {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.center-glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, transparent 70%);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.center-symbol {
+  font-size: 48px;
+  color: #ec4899;
+  text-shadow: 0 0 20px rgba(236, 72, 153, 0.8);
+  animation: symbol-pulse 2s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+@keyframes symbol-pulse {
+  0%, 100% {
+    transform: scale(1);
+    text-shadow: 0 0 20px rgba(236, 72, 153, 0.8);
+  }
+  50% {
+    transform: scale(1.1);
+    text-shadow: 0 0 40px rgba(236, 72, 153, 1);
+  }
+}
+
+/* Orbiting Elements */
+.orbit {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.orbit-1 {
+  animation: orbit-1 6s linear infinite;
+}
+
+.orbit-2 {
+  animation: orbit-2 8s linear infinite;
+  animation-direction: reverse;
+}
+
+.orbit-3 {
+  animation: orbit-3 10s linear infinite;
+}
+
+@keyframes orbit-1 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-2 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes orbit-3 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orbit-element {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 20px;
+  color: #22d3ee;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
+}
+
+/* Ritual Text */
+.ritual-text {
+  position: absolute;
+  bottom: -80px;
+  text-align: center;
+  width: 100%;
+  z-index: 5;
+}
+
+.ritual-message {
+  font-size: 16px;
+  color: #22d3ee;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+  letter-spacing: 2px;
+  margin: 0;
+  font-family: "Courier New", monospace;
+  min-height: 24px;
+}
+
+.ritual-dots {
+  font-size: 14px;
+  color: #ec4899;
+  letter-spacing: 4px;
+  margin: 8px 0 0 0;
+  min-height: 20px;
+}
+
+/* Phase Indicator */
+.phase-indicator {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  border: 1px solid rgba(236, 72, 153, 0.5);
+  border-radius: 20px;
+  background: rgba(236, 72, 153, 0.1);
+  z-index: 5;
+}
+
+.phase-label {
+  font-size: 12px;
+  color: #ec4899;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+
+/* Phase-specific styles */
+.ritual-awakening .center-symbol {
+  animation: symbol-pulse 3s ease-in-out infinite;
+}
+
+.ritual-channeling .center-symbol {
+  animation: symbol-pulse 2s ease-in-out infinite;
+}
+
+.ritual-revealing .center-symbol {
+  animation: symbol-pulse 1s ease-in-out infinite;
+}
+
+.ritual-ascending .center-symbol {
+  animation: symbol-pulse 0.5s ease-in-out infinite;
+}
+
+/* Mystical Background */
+.mystical-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  opacity: 0.3;
+}
+
+.mystical-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #22d3ee;
+  border-radius: 50%;
+  animation: float-particle 8s ease-in-out infinite;
+}
+
+.mystical-particle:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.mystical-particle:nth-child(2) {
+  top: 30%;
+  right: 15%;
+  animation-delay: 1s;
+}
+
+.mystical-particle:nth-child(3) {
+  top: 60%;
+  left: 20%;
+  animation-delay: 2s;
+}
+
+.mystical-particle:nth-child(4) {
+  top: 70%;
+  right: 10%;
+  animation-delay: 3s;
+}
+
+.mystical-particle:nth-child(5) {
+  top: 50%;
+  left: 50%;
+  animation-delay: 4s;
+}
+
+@keyframes float-particle {
+  0%, 100% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Symbolic Transition */
+.symbolic-transition {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 14, 39, 0.9);
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-duration, 1000ms) ease-in-out;
+}
+
+.symbolic-transition.visible {
+  opacity: 1;
+}
+
+.symbolic-transition.hidden {
+  opacity: 0;
+}
+
+.transition-symbol {
+  font-size: 64px;
+  color: #ec4899;
+  text-shadow: 0 0 30px rgba(236, 72, 153, 0.8);
+  animation: transition-symbol-scale 1s ease-out;
+}
+
+@keyframes transition-symbol-scale {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.transition-lines {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, #22d3ee, transparent);
+  animation: transition-line-expand 1s ease-out;
+}
+
+.line-1 {
+  width: 200px;
+  height: 2px;
+  top: 50%;
+}
+
+.line-2 {
+  width: 2px;
+  height: 200px;
+  left: 50%;
+}
+
+.line-3 {
+  width: 150px;
+  height: 150px;
+  border: 2px solid #22d3ee;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: transition-circle-expand 1s ease-out;
+}
+
+@keyframes transition-line-expand {
+  0% {
+    opacity: 1;
+    transform: scaleX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes transition-circle-expand {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Ritual Progress */
+.ritual-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.progress-stages {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.progress-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stage-symbol {
+  font-size: 24px;
+  color: #22d3ee;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
+}
+
+.progress-stage.completed .stage-symbol {
+  color: #ec4899;
+  text-shadow: 0 0 15px rgba(236, 72, 153, 0.8);
+  animation: stage-complete 0.5s ease-out;
+}
+
+.progress-stage.active .stage-symbol {
+  color: #fbbf24;
+  text-shadow: 0 0 20px rgba(251, 191, 36, 1);
+  animation: stage-pulse 1s ease-in-out infinite;
+}
+
+@keyframes stage-complete {
+  0% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes stage-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.stage-line {
+  width: 30px;
+  height: 2px;
+  background: rgba(34, 211, 238, 0.3);
+  transition: background 0.3s ease;
+}
+
+.progress-stage.completed .stage-line {
+  background: rgba(236, 72, 153, 0.8);
+}
+
+.progress-stage:last-child .stage-line {
+  display: none;
+}
