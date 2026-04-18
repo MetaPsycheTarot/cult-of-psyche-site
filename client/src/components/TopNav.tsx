@@ -96,6 +96,17 @@ export default function TopNav() {
                 >
                   Profile
                 </a>
+                <a
+                  href="/dashboard/readings"
+                  className="text-xs px-3 py-2 rounded-lg transition-all"
+                  style={{
+                    color: location === "/dashboard/readings" ? "var(--color-hot-pink)" : "var(--color-text-secondary)",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-cyan)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = location === "/dashboard/readings" ? "var(--color-hot-pink)" : "var(--color-text-secondary)")}
+                >
+                  Statistics
+                </a>
                 <button
                   onClick={handleLogout}
                   className="btn-neon text-xs"

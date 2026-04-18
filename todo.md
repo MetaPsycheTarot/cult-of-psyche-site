@@ -246,3 +246,13 @@
 - [x] Implement date range filtering (last 30 days)
 - [x] Add export reading statistics as JSON/CSV (JSON export)
 - [x] Display reading insights and patterns (key metrics cards)
+
+
+## DASHBOARD ENHANCEMENTS
+
+- [x] Add "Statistics" link to vault sidebar navigation (TrendingUp icon)
+- [x] Add "Statistics" link to user profile dropdown (TopNav)
+- [x] Implement "Share Reading" button on dashboard (Share2 icon)
+- [x] Create forum post from reading share (auto-posts to forum)
+- [x] Add date range picker to dashboard (start/end date inputs)
+- [x] Implement custom date filtering for statistics (dynamic filtering)
