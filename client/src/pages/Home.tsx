@@ -28,10 +28,10 @@ export default function Home() {
 
         <div className="container max-w-4xl mx-auto text-center">
           <h1 className="text-6xl md:text-7xl font-bold mb-6" style={{ color: "var(--color-hot-pink)" }}>
-            Enter the Codex.
+            Enter the Codex: Exclusive Occult Content & Tarot Readings
           </h1>
           <p className="text-2xl mb-8" style={{ color: "var(--color-cyan)" }}>
-            Content was never the point. This is a system.
+            Join the Cult of Psyche for exclusive livestreams, tarot readings, and occult wisdom.
           </p>
 
           <div
@@ -70,10 +70,10 @@ export default function Home() {
         <div className="container max-w-4xl">
           <div className="mb-8">
             <h2 className="text-3xl font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
-              Watch the Latest
+              Watch Psyche's Nightmares Livestreams
             </h2>
             <p style={{ color: "var(--color-text-secondary)" }}>
-              Tune into Psyche's Nightmares livestreams for exclusive content, rituals, and occult wisdom.
+              Tune into exclusive livestreams for occult content, rituals, tarot readings, and esoteric wisdom.
             </p>
           </div>
           <YouTubeEmbed className="h-96 md:h-screen-1/2" />
@@ -84,24 +84,24 @@ export default function Home() {
       <section className="py-20 px-4">
         <div className="container max-w-4xl">
           <h2 className="text-3xl font-bold mb-12 text-center" style={{ color: "var(--color-hot-pink)" }}>
-            What You Get Inside
+            Exclusive Tarot System, Content & Occult Tools
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {[
               {
-                title: "Exclusive Content",
-                description: "Full episodes, extended cuts, and uncensored segments.",
+                title: "Exclusive Occult Content",
+                description: "Full episodes, extended cuts, and uncensored occult segments from Psyche's Nightmares livestreams.",
                 icon: "🎥",
               },
               {
-                title: "Tarot System",
-                description: "Psyche Awakens deck with readings and interpretations.",
+                title: "Tarot Reading System",
+                description: "Psyche Awakens tarot deck with detailed readings, interpretations, and esoteric guidance.",
                 icon: "🃏",
               },
               {
-                title: "Tools & Generators",
-                description: "Nightmare generator, tarot pulls, and prompt tools.",
+                title: "Occult Tools & Generators",
+                description: "Nightmare generator, tarot pulls, prompt tools, and esoteric resources for spiritual exploration.",
                 icon: "🧰",
               },
             ].map((item) => (
