@@ -234,3 +234,15 @@
 - [x] Randomly determine card orientation during pulls
 - [x] Display orientation indicator (upright/reversed) on cards (⬆ UPRIGHT / ⬇ REVERSED)
 - [x] Update AI interpretation to include reversed meanings (shadow meanings in prompt)
+
+
+## READING STATISTICS DASHBOARD
+
+- [x] Create /dashboard/readings page for reading analytics
+- [x] Display total readings count and reading frequency
+- [x] Show most-pulled cards with frequency chart (bar chart)
+- [x] Display spread type distribution (pie chart)
+- [x] Add reading timeline with recent readings (line chart)
+- [x] Implement date range filtering (last 30 days)
+- [x] Add export reading statistics as JSON/CSV (JSON export)
+- [x] Display reading insights and patterns (key metrics cards)
