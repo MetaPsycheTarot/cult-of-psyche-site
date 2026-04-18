@@ -75,7 +75,7 @@ export default function ReferralProgram() {
     const encodedLink = encodeURIComponent(referralData.referralLink);
 
     const urls: Record<string, string> = {
-      twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedLink}`,
+      twitter: `https://x.com/intent/tweet?text=${encodedText}&url=${encodedLink}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`,
       whatsapp: `https://wa.me/?text=${encodedText}%20${encodedLink}`,
       email: `mailto:?subject=Join the Cult of Psyche&body=${encodedText}%0A%0A${encodedLink}`,

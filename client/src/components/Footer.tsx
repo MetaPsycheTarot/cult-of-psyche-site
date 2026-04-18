@@ -89,7 +89,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="https://twitter.com"
+                  href="https://x.com/PsycheAwakens"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-colors"
