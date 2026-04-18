@@ -795,3 +795,12 @@
 - Admin cleanup procedure
 - Type safety with TypeScript
 - Responsive UI components
+
+
+## TAROT CARD IMAGE FIX (COMPLETED)
+
+- [x] Identify card name to image key mapping issue
+- [x] Add MAJOR_ARCANA_ALIASES mapping for custom card names
+- [x] Fix regex syntax error in cardKeyConverter
+- [x] Test card images in tarot deck browser
+- [x] Test card images in tarot pull readings

@@ -1,29 +1,20 @@
-import { TAROT_DECK } from './server/data/tarotDeck.ts';
-import { tarotCardImages } from './server/data/tarotCardImages.ts';
 import { cardNameToImageKey } from './server/data/cardKeyConverter.ts';
 
-const allKeys = Object.keys(tarotCardImages);
-console.log(`Total image keys available: ${allKeys.length}\n`);
+// Test a few card names
+const testCards = [
+  { name: "The Psyche Awakens", suit: "major" },
+  { name: "The Oracle Feed", suit: "major" },
+  { name: "The Gate of Login", suit: "major" },
+  { name: "Lanore, Guardian Cat", suit: "major" },
+  { name: "Trix the Tricklight", suit: "major" },
+  { name: "Lola of Soft Judgment", suit: "major" },
+  { name: "Rudy the Wander Signal", suit: "major" },
+  { name: "Marbles of Chaos Play", suit: "major" },
+  { name: "The Cult of Psyche", suit: "major" },
+  { name: "Chat Flood", suit: "major" },
+];
 
-const missing = [];
-TAROT_DECK.forEach((card) => {
+testCards.forEach(card => {
   const key = cardNameToImageKey(card.name, card.suit);
-  const hasImage = allKeys.includes(key);
-  
-  if (!hasImage) {
-    missing.push({
-      cardName: card.name,
-      suit: card.suit,
-      generatedKey: key
-    });
-  }
+  console.log(`"${card.name}" -> "${key}"`);
 });
-
-if (missing.length === 0) {
-  console.log('✅ All cards have matching image keys!');
-} else {
-  console.log(`❌ ${missing.length} cards missing images:\n`);
-  missing.forEach(m => {
-    console.log(`"${m.cardName}" (${m.suit}) -> "${m.generatedKey}"`);
-  });
-}
