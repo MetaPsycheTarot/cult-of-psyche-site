@@ -299,3 +299,84 @@
 - [x] Implement share modal with preview and customization
 - [x] Add forum post creation and success feedback
 - [x] Write vitest tests for forum sharing functionality
+
+
+## FULL-SITE TESTING AUDIT
+
+### Tarot Reading Generation
+- [ ] Test single card pull
+- [ ] Test 3-card reading pull
+- [ ] Test Celtic Cross spread pull
+- [ ] Verify card data completeness (name, suit, number, meaning)
+- [ ] Verify interpretation generation
+- [ ] Test with custom questions
+- [ ] Verify reversed card handling
+
+### Reading Comparison Feature
+- [ ] Test comparison of two readings
+- [ ] Verify card matching logic
+- [ ] Verify orientation comparison
+- [ ] Test spread type combinations
+- [ ] Verify metadata accuracy
+
+### AI Analysis Generation
+- [ ] Test analysis generation for comparisons
+- [ ] Verify caching mechanism
+- [ ] Test cache retrieval
+- [ ] Verify analysis quality and relevance
+- [ ] Test error handling on LLM failure
+- [ ] Verify fallback messages
+
+### Archive Storage
+- [ ] Test saving readings to archive
+- [ ] Test saving comparisons to archive
+- [ ] Test retrieving from archive
+- [ ] Test search functionality
+- [ ] Test filtering by type
+- [ ] Test export functionality
+- [ ] Test deletion from archive
+- [ ] Verify data persistence across sessions
+
+### Forum Sharing
+- [ ] Test sharing comparison to forum
+- [ ] Verify forum post creation
+- [ ] Test "Shared" status display
+- [ ] Test share modal functionality
+- [ ] Test custom title input
+- [ ] Test custom comments input
+- [ ] Verify preview rendering
+- [ ] Test success feedback
+- [ ] Test error handling
+
+### UI & Navigation
+- [ ] Test responsive design (mobile, tablet, desktop)
+- [ ] Test all navigation links
+- [ ] Test button interactions
+- [ ] Test form submissions
+- [ ] Verify color scheme consistency
+- [ ] Test accessibility (keyboard navigation, focus states)
+- [ ] Verify loading states
+- [ ] Test empty states
+
+### Error Handling
+- [ ] Test network error handling
+- [ ] Test invalid input handling
+- [ ] Test localStorage corruption handling
+- [ ] Test LLM timeout handling
+- [ ] Test missing data handling
+- [ ] Verify error messages are user-friendly
+
+### Performance
+- [ ] Measure page load time
+- [ ] Test with large datasets
+- [ ] Verify smooth animations
+- [ ] Test memory usage
+- [ ] Verify no console errors
+- [ ] Test on slow network
+
+### Security & Data
+- [ ] Verify authentication required for protected routes
+- [ ] Test data privacy (no sensitive data in logs)
+- [ ] Verify HTTPS usage
+- [ ] Test CSRF protection
+- [ ] Verify input sanitization
