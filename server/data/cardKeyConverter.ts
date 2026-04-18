@@ -1,10 +1,20 @@
 /**
  * Convert card names to image keys for lookup in tarotCardImages mapping
+ * 
+ * Examples:
+ * - "The Psyche Awakens" -> "psyche-awakens"
+ * - "The Oracle Feed" -> "oracle-feed"
+ * - "Ace of Wands" (suit: wands) -> "wands-ace"
+ * - "Two of Cups" (suit: cups) -> "cups-two"
+ * - "The Lovers" (suit: major) -> "lovers-chat"
  */
 
 export function cardNameToImageKey(cardName: string, suit?: string): string {
   // Remove "The " prefix if present
   let key = cardName.replace(/^The\s+/i, "");
+  
+  // Remove "of [Suit]" for numbered cards (e.g., "Ace of Wands" -> "Ace")
+  key = key.replace(/\s+of\s+\w+/i, "");
   
   // Remove commas and other special characters
   key = key.replace(/[,]/g, "");
@@ -32,11 +42,9 @@ export function cardNameToImageKey(cardName: string, suit?: string): string {
   
   // If suit is provided, prepend it (for numbered cards)
   if (suit && suit !== "major") {
-    // Check if the key is a number word
-    for (const [word, replacement] of Object.entries(numberMap)) {
-      if (key.includes(word)) {
-        return `${suit}-${replacement}`;
-      }
+    // Check if the key matches a number word exactly
+    if (numberMap[key]) {
+      return `${suit}-${key}`;
     }
     // Otherwise, try suit-key format
     return `${suit}-${key}`;
