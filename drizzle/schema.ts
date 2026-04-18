@@ -1,4 +1,5 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json } from "drizzle-orm/mysql-core";
+import { sql } from "drizzle-orm";
 
 /**
  * Core user table backing auth flow.
@@ -25,4 +26,80 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Subscription tiers for monetization
+ */
+export const subscriptionTiers = mysqlTable("subscription_tiers", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 64 }).notNull(), // "Free", "Pro", "Premium"
+  description: text("description"),
+  monthlyPrice: decimal("monthlyPrice", { precision: 10, scale: 2 }).default("0"),
+  annualPrice: decimal("annualPrice", { precision: 10, scale: 2 }).default("0"),
+  features: json("features").$type<string[]>().default(sql`json_array()`),
+  maxReadingsPerMonth: int("maxReadingsPerMonth").default(-1), // -1 = unlimited
+  maxComparisonsPerMonth: int("maxComparisonsPerMonth").default(-1),
+  pdfExportEnabled: boolean("pdfExportEnabled").default(false),
+  recommendationsEnabled: boolean("recommendationsEnabled").default(false),
+  prioritySupport: boolean("prioritySupport").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SubscriptionTier = typeof subscriptionTiers.$inferSelect;
+export type InsertSubscriptionTier = typeof subscriptionTiers.$inferInsert;
+
+/**
+ * User subscriptions
+ */
+export const userSubscriptions = mysqlTable("user_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tierId: int("tierId").notNull().references(() => subscriptionTiers.id),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
+  stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }),
+  status: mysqlEnum("status", ["active", "canceled", "past_due", "paused"]).default("active"),
+  billingCycle: mysqlEnum("billingCycle", ["monthly", "annual"]).default("monthly"),
+  currentPeriodStart: timestamp("currentPeriodStart"),
+  currentPeriodEnd: timestamp("currentPeriodEnd"),
+  canceledAt: timestamp("canceledAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserSubscription = typeof userSubscriptions.$inferSelect;
+export type InsertUserSubscription = typeof userSubscriptions.$inferInsert;
+
+/**
+ * Usage tracking for rate limiting
+ */
+export const usageTracking = mysqlTable("usage_tracking", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  readingsThisMonth: int("readingsThisMonth").default(0),
+  comparisonsThisMonth: int("comparisonsThisMonth").default(0),
+  pdfExportsThisMonth: int("pdfExportsThisMonth").default(0),
+  lastResetDate: timestamp("lastResetDate").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UsageTracking = typeof usageTracking.$inferSelect;
+export type InsertUsageTracking = typeof usageTracking.$inferInsert;
+
+/**
+ * Reading recommendations based on user history
+ */
+export const readingRecommendations = mysqlTable("reading_recommendations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  cardId: int("cardId").notNull(),
+  cardName: varchar("cardName", { length: 255 }).notNull(),
+  frequency: int("frequency").default(0), // How many times this card appeared
+  lastAppeared: timestamp("lastAppeared"),
+  recommendationScore: decimal("recommendationScore", { precision: 5, scale: 2 }).default("0"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ReadingRecommendation = typeof readingRecommendations.$inferSelect;
+export type InsertReadingRecommendation = typeof readingRecommendations.$inferInsert;
