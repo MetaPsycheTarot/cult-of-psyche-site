@@ -13,11 +13,15 @@ export function cardNameToImageKey(cardName: string, suit?: string): string {
   // Remove "The " prefix if present
   let key = cardName.replace(/^The\s+/i, "");
   
-  // Remove "of [Suit]" for numbered cards (e.g., "Ace of Wands" -> "Ace")
-  key = key.replace(/\s+of\s+\w+/i, "");
+  // Remove "of [Suit]" ONLY for numbered cards (e.g., "Ace of Wands" -> "Ace")
+  // Only match if it's one of the four suits: Wands, Cups, Swords, Pentacles
+  key = key.replace(/\s+of\s+(wands|cups|swords|pentacles)/i, "");
   
-  // Remove commas and other special characters
-  key = key.replace(/[,]/g, "");
+  // Remove all special characters except spaces and hyphens
+  key = key.replace(/[,!?;:'"]/g, "");
+  
+  // Clean up multiple consecutive spaces
+  key = key.replace(/\s+/g, " ").trim();
   
   // Convert to lowercase and replace spaces with hyphens
   key = key.toLowerCase().replace(/\s+/g, "-");
