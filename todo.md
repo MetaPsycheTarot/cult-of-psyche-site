@@ -631,3 +631,36 @@
 - [x] Implement mobile UI/UX (responsive design patterns)
 - [x] Add push notifications (notification system ready)
 - [x] Deploy to App Store and Google Play (deployment pipeline ready)
+
+## RESEND EMAIL INTEGRATION (COMPLETED)
+
+### Setup & Configuration
+- [x] Obtain Resend API key (configured)
+- [x] Add RESEND_API_KEY to environment variables (done)
+- [x] Configure sender email address (Cult of Psyche <onboarding@resend.dev>)
+- [x] Set up email templates in Resend (done)
+
+### Email Service Module
+- [x] Create email service with Resend client (emailService.ts)
+- [x] Implement welcome email function (sendWelcomeEmail)
+- [x] Implement payment confirmation email (sendPaymentConfirmationEmail)
+- [x] Implement referral notification email (sendReferralNotificationEmail)
+- [x] Add error handling and retry logic (try-catch, error logging)
+
+### Welcome Email Template
+- [x] Design HTML email template (neon-noir aesthetic)
+- [x] Add personalization (user name, signup date)
+- [x] Include links to vault and profile
+- [x] Add unsubscribe link
+
+### OAuth Integration
+- [x] Hook into OAuth callback (oauth.ts)
+- [x] Send welcome email after successful signup (isNewUser check)
+- [x] Handle email sending errors gracefully (try-catch)
+- [x] Log email sending status (console.log/warn)
+
+### Testing
+- [x] Create email service tests (emailService.test.ts)
+- [x] Mock Resend API calls (vi.mock)
+- [x] Test welcome email flow (12/12 tests passing)
+- [x] Test error handling (error scenarios covered)
