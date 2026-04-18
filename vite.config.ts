@@ -167,7 +167,7 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
-    minify: "esbuild",
+    minify: false,
     rollupOptions: {
       output: {
         manualChunks(id) {
