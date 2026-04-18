@@ -138,6 +138,40 @@ export function Footer() {
                   Facebook
                 </a>
               </li>
+              <li>
+                <a
+                  href="https://www.instagram.com/psycheawakens"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors"
+                  style={{ color: "var(--color-text-secondary)" }}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLElement).style.color = "var(--color-cyan)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLElement).style.color = "var(--color-text-secondary)";
+                  }}
+                >
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.tiktok.com/@cultofpsyche"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors"
+                  style={{ color: "var(--color-text-secondary)" }}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLElement).style.color = "var(--color-cyan)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLElement).style.color = "var(--color-text-secondary)";
+                  }}
+                >
+                  TikTok
+                </a>
+              </li>
             </ul>
           </div>
         </div>
