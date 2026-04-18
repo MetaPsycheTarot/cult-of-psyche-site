@@ -106,7 +106,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://youtube.com"
+                  href="https://www.youtube.com/@PsychesNightmares"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-colors"
@@ -115,10 +115,27 @@ export function Footer() {
                     (e.target as HTMLElement).style.color = "var(--color-cyan)";
                   }}
                   onMouseLeave={(e) => {
-                    (e.target as HTMLElement).style.color = "var(--color-cyan)";
+                    (e.target as HTMLElement).style.color = "var(--color-text-secondary)";
                   }}
                 >
                   YouTube
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.facebook.com/profile.php?id=61584496550976"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors"
+                  style={{ color: "var(--color-text-secondary)" }}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLElement).style.color = "var(--color-cyan)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLElement).style.color = "var(--color-text-secondary)";
+                  }}
+                >
+                  Facebook
                 </a>
               </li>
             </ul>
