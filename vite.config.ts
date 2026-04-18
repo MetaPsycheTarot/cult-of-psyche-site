@@ -167,12 +167,17 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    minify: "terser",
     rollupOptions: {
       output: {
-        manualChunks: {
-          "vendor-react": ["react", "react-dom"],
-          "vendor-ui": ["@radix-ui/react-dialog", "@radix-ui/react-select"],
-          "vendor-trpc": ["@trpc/client"],
+        manualChunks(id) {
+          if (id.includes("node_modules/react")) return "vendor-react";
+          if (id.includes("node_modules/@radix-ui")) return "vendor-ui";
+          if (id.includes("node_modules/@trpc")) return "vendor-trpc";
+          if (id.includes("node_modules")) return "vendor-other";
+          if (id.includes("pages/vault")) return "feature-vault";
+          if (id.includes("pages/Community")) return "feature-community";
+          if (id.includes("pages/Reading")) return "feature-reading";
         },
       },
     },
