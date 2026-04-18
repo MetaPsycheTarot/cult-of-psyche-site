@@ -278,3 +278,15 @@
 - [x] Provide guidance on interpreting reading differences
 - [x] Add AI summary to comparison page
 - [x] Cache AI insights for performance
+
+
+## ARCHIVE COMPARISON ANALYSES SECTION
+
+- [x] Create localStorage storage for AI comparison analyses (comparisonAnalyses key)
+- [x] Add "comparison" type to Archive item types
+- [x] Update ReadingComparison to save analyses after generation
+- [x] Add comparison analyses filter to Archive page
+- [x] Create comparison analyses display section with spread type info
+- [x] Add search functionality for comparison analyses
+- [x] Implement export for comparison analyses
+- [x] Add vitest tests for comparison analysis storage and retrieval

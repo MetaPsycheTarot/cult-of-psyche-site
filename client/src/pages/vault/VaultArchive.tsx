@@ -2,11 +2,13 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import { VaultSidebar } from "@/components/VaultSidebar";
-import { ChevronDown, Download, Trash2, Search } from "lucide-react";
+import { ChevronDown, Download, Trash2, Search, Sparkles } from "lucide-react";
+import { getComparisonAnalysesSorted, deleteComparisonAnalysis } from "@/lib/comparisonAnalysisStorage";
+import type { ComparisonAnalysis } from "@/lib/comparisonAnalysisStorage";
 
 interface ArchiveItem {
   id: string;
-  type: "nightmare" | "reading" | "prompt";
+  type: "nightmare" | "reading" | "prompt" | "comparison";
   title: string;
   content: string;
   createdAt: number;
@@ -20,7 +22,7 @@ export default function VaultArchive() {
   const [archiveItems, setArchiveItems] = useState<ArchiveItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<ArchiveItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState<"all" | "nightmare" | "reading" | "prompt">("all");
+  const [selectedFilter, setSelectedFilter] = useState<"all" | "nightmare" | "reading" | "prompt" | "comparison">("all");
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function VaultArchive() {
     const nightmares = JSON.parse(localStorage.getItem("nightmareBookmarks") || "[]");
     const readings = JSON.parse(localStorage.getItem("tarot_readings") || "[]");
     const prompts = JSON.parse(localStorage.getItem("promptBookmarks") || "[]");
+    const comparisons = getComparisonAnalysesSorted();
 
     const items: ArchiveItem[] = [
       ...nightmares.map((n: any) => ({
@@ -62,6 +65,15 @@ export default function VaultArchive() {
         createdAt: p.createdAt || Date.now(),
         metadata: p,
         storageKey: "promptBookmarks",
+      })),
+      ...comparisons.map((c: ComparisonAnalysis) => ({
+        id: c.id,
+        type: "comparison" as const,
+        title: `${c.reading1SpreadType} ↔ ${c.reading2SpreadType}`,
+        content: c.analysis,
+        createdAt: c.createdAt,
+        metadata: c,
+        storageKey: "comparisonAnalyses",
       })),
     ];
 
@@ -93,15 +105,20 @@ export default function VaultArchive() {
     const itemToDelete = archiveItems.find((item) => item.id === id);
     
     if (itemToDelete && storageKey) {
-      // Update localStorage
-      const stored = JSON.parse(localStorage.getItem(storageKey) || "[]");
-      const updated = stored.filter((item: any) => {
-        if (itemToDelete.type === "reading") {
+      // Handle comparison analysis deletion separately
+      if (itemToDelete.type === "comparison") {
+        deleteComparisonAnalysis(id);
+      } else {
+        // Update localStorage for other types
+        const stored = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        const updated = stored.filter((item: any) => {
+          if (itemToDelete.type === "reading") {
+            return item.id !== itemToDelete.metadata?.id;
+          }
           return item.id !== itemToDelete.metadata?.id;
-        }
-        return item.id !== itemToDelete.metadata?.id;
-      });
-      localStorage.setItem(storageKey, JSON.stringify(updated));
+        });
+        localStorage.setItem(storageKey, JSON.stringify(updated));
+      }
     }
 
     setArchiveItems(archiveItems.filter((item) => item.id !== id));
@@ -116,6 +133,7 @@ export default function VaultArchive() {
         nightmares: archiveItems.filter((i) => i.type === "nightmare").length,
         readings: archiveItems.filter((i) => i.type === "reading").length,
         prompts: archiveItems.filter((i) => i.type === "prompt").length,
+        comparisons: archiveItems.filter((i) => i.type === "comparison").length,
       },
     };
 
@@ -138,6 +156,7 @@ export default function VaultArchive() {
     nightmares: archiveItems.filter((i) => i.type === "nightmare").length,
     readings: archiveItems.filter((i) => i.type === "reading").length,
     prompts: archiveItems.filter((i) => i.type === "prompt").length,
+    comparisons: archiveItems.filter((i) => i.type === "comparison").length,
   };
 
   const getTypeIcon = (type: string) => {
@@ -148,6 +167,8 @@ export default function VaultArchive() {
         return "🔮";
       case "prompt":
         return "✍️";
+      case "comparison":
+        return "✨";
       default:
         return "📝";
     }
@@ -161,6 +182,8 @@ export default function VaultArchive() {
         return "var(--color-cyan)";
       case "prompt":
         return "var(--color-hot-pink)";
+      case "comparison":
+        return "#a78bfa"; // Purple for comparison analyses
       default:
         return "var(--color-text-secondary)";
     }
@@ -182,7 +205,7 @@ export default function VaultArchive() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-5 gap-4 mb-8">
           <div
             className="p-4 rounded-lg border"
             style={{
@@ -242,6 +265,21 @@ export default function VaultArchive() {
               {stats.prompts}
             </div>
           </div>
+
+          <div
+            className="p-4 rounded-lg border"
+            style={{
+              background: "rgba(167, 139, 250, 0.05)",
+              borderColor: "rgba(167, 139, 250, 0.2)",
+            }}
+          >
+            <div style={{ color: "#a78bfa" }} className="text-sm font-semibold">
+              Comparisons
+            </div>
+            <div className="text-3xl font-bold mt-2" style={{ color: "#a78bfa" }}>
+              {stats.comparisons}
+            </div>
+          </div>
         </div>
 
         {/* Controls */}
@@ -270,7 +308,7 @@ export default function VaultArchive() {
           {/* Filter & Export */}
           <div className="flex gap-4 justify-between">
             <div className="flex gap-2">
-              {(["all", "nightmare", "reading", "prompt"] as const).map((filter) => (
+              {(["all", "nightmare", "reading", "prompt", "comparison"] as const).map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setSelectedFilter(filter)}
@@ -286,7 +324,7 @@ export default function VaultArchive() {
                         : "var(--color-text-secondary)",
                   }}
                 >
-                  {filter === "all" ? "All" : filter.charAt(0).toUpperCase() + filter.slice(1)}
+                  {filter === "all" ? "All" : filter === "comparison" ? "Comparisons" : filter.charAt(0).toUpperCase() + filter.slice(1)}
                 </button>
               ))}
             </div>

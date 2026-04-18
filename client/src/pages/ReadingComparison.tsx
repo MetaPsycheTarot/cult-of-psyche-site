@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Download, Share2, Sparkles, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Download, Share2, Sparkles, AlertCircle, Save, CheckCircle } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
+import { saveComparisonAnalysis } from '@/lib/comparisonAnalysisStorage';
 
 interface TarotReading {
   id: string;
@@ -34,6 +35,8 @@ export default function ReadingComparison() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState<string>('');
   const [analysisCache, setAnalysisCache] = useState<Record<string, string>>({});
+  const [isSavingAnalysis, setIsSavingAnalysis] = useState(false);
+  const [analysisSaved, setAnalysisSaved] = useState(false);
   const analyzeReadingMutation = trpc.tarot.analyzeReadingComparison.useMutation();
 
   useEffect(() => {
@@ -89,6 +92,7 @@ export default function ReadingComparison() {
         // Reset AI analysis when readings change
         setAiAnalysis('');
         setAnalysisError('');
+        setAnalysisSaved(false);
       }
     }
   }, [selectedReading1, selectedReading2, readings]);
@@ -124,6 +128,32 @@ export default function ReadingComparison() {
     link.click();
   };
 
+  const handleSaveAnalysis = async () => {
+    if (!reading1 || !reading2 || !aiAnalysis || !comparison) return;
+    
+    setIsSavingAnalysis(true);
+    try {
+      saveComparisonAnalysis(
+        selectedReading1,
+        selectedReading2,
+        reading1.spreadType,
+        reading2.spreadType,
+        aiAnalysis,
+        comparison.sameCards,
+        comparison.differentCards,
+        comparison.sameOrientations,
+        comparison.differentOrientations
+      );
+      setAnalysisSaved(true);
+      // Show success message for 3 seconds
+      setTimeout(() => setAnalysisSaved(false), 3000);
+    } catch (error) {
+      console.error('Failed to save analysis:', error);
+    } finally {
+      setIsSavingAnalysis(false);
+    }
+  };
+
   const handleGenerateAnalysis = async () => {
     if (!reading1 || !reading2) return;
     
@@ -134,6 +164,7 @@ export default function ReadingComparison() {
     if (analysisCache[cacheKey]) {
       setAiAnalysis(analysisCache[cacheKey]);
       setAnalysisError('');
+      setAnalysisSaved(false);
       return;
     }
     
@@ -155,6 +186,7 @@ export default function ReadingComparison() {
       setAiAnalysis(result.analysis);
       // Cache the result
       setAnalysisCache(prev => ({ ...prev, [cacheKey]: result.analysis }));
+      setAnalysisSaved(false);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to generate analysis. Please try again.';
       setAnalysisError(errorMessage);
@@ -361,11 +393,29 @@ export default function ReadingComparison() {
 
               {aiAnalysis && (
                 <div className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 border border-purple-500/50 rounded-lg p-6">
-                  <h3 className="text-lg font-bold text-purple-400 mb-4 flex items-center gap-2">
-                    <Sparkles className="w-5 h-5" />
-                    MYSTICAL INSIGHTS
-                  </h3>
-                  <p className="text-gray-300 leading-relaxed">{aiAnalysis}</p>
+                  <div className="flex items-start justify-between mb-4">
+                    <h3 className="text-lg font-bold text-purple-400 flex items-center gap-2">
+                      <Sparkles className="w-5 h-5" />
+                      MYSTICAL INSIGHTS
+                    </h3>
+                    {analysisSaved && (
+                      <div className="flex items-center gap-2 text-green-400 text-sm font-semibold">
+                        <CheckCircle className="w-4 h-4" />
+                        Saved to Archive
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-gray-300 leading-relaxed mb-4">{aiAnalysis}</p>
+                  
+                  {/* Save Analysis Button */}
+                  <button
+                    onClick={handleSaveAnalysis}
+                    disabled={isSavingAnalysis || analysisSaved}
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600/50 hover:bg-purple-600/70 disabled:opacity-50 disabled:cursor-not-allowed text-purple-300 rounded-lg transition-all font-semibold text-sm"
+                  >
+                    <Save className="w-4 h-4" />
+                    {analysisSaved ? 'Analysis Saved' : isSavingAnalysis ? 'Saving...' : 'Save to Archive'}
+                  </button>
                 </div>
               )}
             </div>
