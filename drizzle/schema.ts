@@ -128,3 +128,22 @@ export const emailEngagementMetrics = mysqlTable("email_engagement_metrics", {
 
 export type EmailEngagementMetric = typeof emailEngagementMetrics.$inferSelect;
 export type InsertEmailEngagementMetric = typeof emailEngagementMetrics.$inferInsert;
+
+/**
+ * User notifications for in-app messaging
+ */
+export const notifications = mysqlTable("notifications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: mysqlEnum("type", ["success", "error", "info", "warning"]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  actionLabel: varchar("actionLabel", { length: 100 }),
+  actionUrl: varchar("actionUrl", { length: 2048 }),
+  isRead: boolean("isRead").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt"),
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;

@@ -8,6 +8,8 @@ import TopNav from "./components/TopNav";
 import { Footer } from "./components/Footer";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { RitualizedLoading } from "./components/RitualizedLoading";
+import { ToastContainer } from "./components/Toast";
+import { NotificationCenter } from "./components/NotificationCenter";
 
 // Public pages
 import Home from "./pages/Home";
@@ -111,6 +113,7 @@ function App() {
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster />
+          <ToastContainer />
           <TopNav />
           <Router />
           <Footer />

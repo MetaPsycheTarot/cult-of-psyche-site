@@ -3,6 +3,7 @@ import { getLoginUrl } from "@/const";
 import { useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { NotificationCenter } from "./NotificationCenter";
 
 const apps = [
   { name: "Home", path: "/" },
@@ -84,6 +85,7 @@ export default function TopNav() {
           <div className="flex items-center gap-4">
             {isAuthenticated ? (
               <div className="hidden sm:flex items-center gap-3">
+                <NotificationCenter />
                 <span className="text-sm" style={{ color: "rgba(0, 217, 255, 0.8)" }}>{user?.name || "User"}</span>
                 <a
                   href="/profile"

@@ -749,3 +749,49 @@
   * "Occult Tools & Generators"
 - [x] Updated subheading copy with keywords in hero section
 - [x] Added theme-color meta tag for branding consistency
+
+
+## CUSTOM NOTIFICATION SYSTEM (COMPLETED)
+
+### Frontend Components
+- [x] Create NotificationContext for state management
+- [x] Build Toast component for temporary notifications
+- [x] Build NotificationCenter component with bell icon
+- [x] Create useNotifications hook for database integration
+- [x] Create useToast hook for quick toast access
+- [x] Add ToastContainer to App.tsx
+- [x] Add NotificationCenter to TopNav
+- [x] Create NotificationExample component for documentation
+
+### Backend Infrastructure
+- [x] Add notifications table to database schema
+- [x] Generate and apply database migration
+- [x] Create notifications tRPC router with 7 procedures
+- [x] Implement getNotifications with pagination
+- [x] Implement getUnreadCount query
+- [x] Implement markAsRead mutation
+- [x] Implement markAllAsRead mutation
+- [x] Implement delete mutation
+- [x] Implement deleteAll mutation
+- [x] Implement cleanupExpired admin procedure
+- [x] Add notifications router to main app router
+
+### Testing & Documentation
+- [x] Write comprehensive vitest tests
+- [x] Create NOTIFICATIONS.md documentation
+- [x] Document usage examples and best practices
+- [x] Document notification types and configuration
+- [x] Add troubleshooting guide
+- [x] Document future enhancement ideas
+
+### Features Implemented
+- Toast notifications (auto-dismiss, customizable duration)
+- Persistent notification center with bell icon
+- Database storage for important notifications
+- Unread count badge
+- Mark as read/all as read functionality
+- Delete individual and all notifications
+- Notification expiration support
+- Admin cleanup procedure
+- Type safety with TypeScript
+- Responsive UI components
