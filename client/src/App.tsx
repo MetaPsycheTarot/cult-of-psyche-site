@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import TopNav from "./components/TopNav";
 import { Footer } from "./components/Footer";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { RitualizedLoading } from "./components/RitualizedLoading";
 
 // Public pages
 import Home from "./pages/Home";
@@ -44,9 +45,11 @@ function Router() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--color-midnight)" }}>
-        <div style={{ color: "var(--color-cyan)" }}>Loading...</div>
-      </div>
+      <RitualizedLoading
+        message="The veil grows thin..."
+        phase="channeling"
+        duration={3000}
+      />
     );
   }
 

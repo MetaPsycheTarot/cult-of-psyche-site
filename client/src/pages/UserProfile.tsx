@@ -2,12 +2,22 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import { VaultSidebar } from "@/components/VaultSidebar";
-import { Calendar, Zap, BookOpen, Award, MessageSquare, Clock } from "lucide-react";
+import { Calendar, Zap, BookOpen, Award, MessageSquare, Clock, Star, Flame } from "lucide-react";
+import { AchievementBadge, LevelUpAnimation, MilestoneReveal } from "@/components/SymbolicFeedback";
+
+import {
+  calculateProgressionLevel,
+  calculateUnlockedMilestones,
+  getProgressionNarrative,
+} from "@/lib/progressionHelpers";
 
 interface MemberStats {
   totalNightmares: number;
   totalReadings: number;
   totalPrompts: number;
+  totalComparisons: number;
+  totalForumPosts: number;
+  totalPDFExports: number;
   joinDate: string;
   lastActive: string;
   membershipTier: "free" | "monthly" | "lifetime";
@@ -31,12 +41,19 @@ export default function UserProfile() {
     totalNightmares: 0,
     totalReadings: 0,
     totalPrompts: 0,
+    totalComparisons: 0,
+    totalForumPosts: 0,
+    totalPDFExports: 0,
     joinDate: new Date().toISOString(),
     lastActive: new Date().toISOString(),
     membershipTier: "free",
     engagementScore: 0,
   });
   const [recentPosts, setRecentPosts] = useState<ForumPost[]>([]);
+  const [progression, setProgression] = useState<any>(null);
+  const [unlockedMilestones, setUnlockedMilestones] = useState<any[]>([]);
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [showMilestone, setShowMilestone] = useState<any>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -49,40 +66,57 @@ export default function UserProfile() {
     const nightmares = JSON.parse(localStorage.getItem("nightmareBookmarks") || "[]");
     const readings = JSON.parse(localStorage.getItem("tarot_readings") || "[]");
     const prompts = JSON.parse(localStorage.getItem("promptBookmarks") || "[]");
+    const comparisons = JSON.parse(localStorage.getItem("comparisonAnalyses") || "[]");
+    const allPosts = JSON.parse(localStorage.getItem("forumPosts") || "[]");
+    const userPosts = allPosts.filter((post: any) => post.userId === user?.id);
+
+    // Count PDF exports (tracked in readings metadata)
+    const pdfExportCount = readings.filter((r: any) => r.exportedToPDF).length;
 
     const totalItems = nightmares.length + readings.length + prompts.length;
-    const engagementScore = Math.min(100, (totalItems * 10) + (user?.role === "admin" || user?.role === "user" ? 20 : 0));
+    const engagementScore = Math.min(
+      100,
+      (totalItems * 10) + (userPosts.length * 5) + (comparisons.length * 8) + (pdfExportCount * 3)
+    );
 
-    setStats({
+    const newStats: MemberStats = {
       totalNightmares: nightmares.length,
       totalReadings: readings.length,
       totalPrompts: prompts.length,
+      totalComparisons: comparisons.length,
+      totalForumPosts: userPosts.length,
+      totalPDFExports: pdfExportCount,
       joinDate: user?.createdAt ? new Date(user.createdAt).toISOString() : new Date().toISOString(),
       lastActive: new Date().toISOString(),
-      membershipTier: user?.role === "admin" || user?.role === "user" ? "lifetime" : "free",
+      membershipTier: (user?.role === "admin" || user?.role === "user" ? "lifetime" : "free") as "free" | "monthly" | "lifetime",
       engagementScore,
+    };
+
+    setStats(newStats);
+
+    // Calculate progression level based on reading count
+    const progressionData = calculateProgressionLevel(readings.length);
+    setProgression(progressionData);
+
+    // Calculate unlocked milestones
+    const milestones = calculateUnlockedMilestones({
+      readingCount: readings.length,
+      comparisonCount: comparisons.length,
+      forumCount: userPosts.length,
+      pdfExportCount,
     });
+    setUnlockedMilestones(milestones);
 
     // Load recent forum posts
-    const allPosts = JSON.parse(localStorage.getItem("forumPosts") || "[]");
-    const userPosts = allPosts
-      .filter((post: any) => post.userId === user?.id)
+    const recentUserPosts = userPosts
       .sort((a: any, b: any) => b.timestamp - a.timestamp)
       .slice(0, 5);
-    setRecentPosts(userPosts);
+    setRecentPosts(recentUserPosts);
   }, [user]);
 
   if (!isAuthenticated) {
     return null;
   }
-
-  const getEngagementLevel = (score: number) => {
-    if (score >= 80) return "Master";
-    if (score >= 60) return "Adept";
-    if (score >= 40) return "Initiate";
-    if (score >= 20) return "Seeker";
-    return "Novice";
-  };
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
@@ -100,6 +134,23 @@ export default function UserProfile() {
       <VaultSidebar />
 
       <div className="flex-1 ml-64 p-8">
+        {/* Level Up Animation */}
+        {showLevelUp && progression && (
+          <LevelUpAnimation
+            level={progression.level}
+            name={progression.name}
+            onComplete={() => setShowLevelUp(false)}
+          />
+        )}
+
+        {/* Milestone Reveal */}
+        {showMilestone && (
+          <MilestoneReveal
+            milestone={showMilestone}
+            onComplete={() => setShowMilestone(null)}
+          />
+        )}
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2" style={{ color: "var(--color-hot-pink)" }}>
@@ -110,7 +161,7 @@ export default function UserProfile() {
           </p>
         </div>
 
-        {/* Profile Card */}
+        {/* Profile Card with Progression */}
         <div
           className="rounded-lg border p-8 mb-8"
           style={{
@@ -129,8 +180,27 @@ export default function UserProfile() {
             </div>
 
             <div className="text-right">
+              {progression && (
+                <div className="mb-4">
+                  <div
+                    className="px-6 py-3 rounded-lg font-bold mb-2 inline-block"
+                    style={{
+                      background: "linear-gradient(135deg, var(--color-hot-pink), var(--color-magenta))",
+                      color: "var(--color-midnight)",
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{progression.symbol}</span>
+                      <span>{progression.name.toUpperCase()}</span>
+                    </div>
+                  </div>
+                  <p style={{ color: "var(--color-cyan)" }} className="text-sm">
+                    Level {progression.level} of 7
+                  </p>
+                </div>
+              )}
               <div
-                className="px-4 py-2 rounded-lg font-bold mb-2"
+                className="px-4 py-2 rounded-lg font-bold"
                 style={{
                   background: "var(--color-hot-pink)",
                   color: "var(--color-midnight)",
@@ -138,15 +208,66 @@ export default function UserProfile() {
               >
                 {stats.membershipTier === "free" ? "Free Member" : "Vault Member"}
               </div>
-              <p style={{ color: "var(--color-cyan)" }} className="text-sm">
-                {getEngagementLevel(stats.engagementScore)} Level
-              </p>
             </div>
           </div>
+
+          {/* Progression Narrative */}
+          {progression && (
+            <div
+              className="mt-6 p-4 rounded-lg border-l-4"
+              style={{
+                background: "rgba(255, 20, 147, 0.05)",
+                borderColor: "var(--color-magenta)",
+              }}
+            >
+              <p style={{ color: "var(--color-text-secondary)", fontStyle: "italic" }}>
+                "{getProgressionNarrative(progression.level)}"
+              </p>
+            </div>
+          )}
         </div>
 
+        {/* Progression Bar */}
+        {progression && (
+          <div
+            className="rounded-lg border p-6 mb-8"
+            style={{
+              background: "rgba(0, 217, 255, 0.05)",
+              borderColor: "rgba(0, 217, 255, 0.2)",
+            }}
+          >
+            <h3 className="text-xl font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
+              ✦ PROGRESSION TO NEXT LEVEL
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span style={{ color: "var(--color-text-secondary)" }}>
+                    {progression.nextLevel ? `${progression.nextLevel.name}` : "ARCHON (Max Level)"}
+                  </span>
+                  <span style={{ color: "var(--color-cyan)" }}>
+                    {stats.totalReadings} / {progression.nextLevel?.minReadings || "∞"} readings
+                  </span>
+                </div>
+                <div
+                  className="h-3 rounded-full overflow-hidden"
+                  style={{ background: "rgba(0, 217, 255, 0.1)" }}
+                >
+                  <div
+                    className="h-full transition-all"
+                    style={{
+                      width: `${progression.progressToNext}%`,
+                      background: "linear-gradient(90deg, var(--color-magenta), var(--color-hot-pink))",
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
           <div
             className="p-6 rounded-lg border"
             style={{
@@ -156,11 +277,11 @@ export default function UserProfile() {
           >
             <div className="flex items-center gap-2 mb-2">
               <Zap size={20} style={{ color: "var(--color-magenta)" }} />
-              <span style={{ color: "var(--color-text-secondary)" }} className="text-sm">
+              <span style={{ color: "var(--color-text-secondary)" }} className="text-xs">
                 Nightmares
               </span>
             </div>
-            <div className="text-3xl font-bold" style={{ color: "var(--color-magenta)" }}>
+            <div className="text-2xl font-bold" style={{ color: "var(--color-magenta)" }}>
               {stats.totalNightmares}
             </div>
           </div>
@@ -174,11 +295,11 @@ export default function UserProfile() {
           >
             <div className="flex items-center gap-2 mb-2">
               <BookOpen size={20} style={{ color: "var(--color-cyan)" }} />
-              <span style={{ color: "var(--color-text-secondary)" }} className="text-sm">
+              <span style={{ color: "var(--color-text-secondary)" }} className="text-xs">
                 Readings
               </span>
             </div>
-            <div className="text-3xl font-bold" style={{ color: "var(--color-cyan)" }}>
+            <div className="text-2xl font-bold" style={{ color: "var(--color-cyan)" }}>
               {stats.totalReadings}
             </div>
           </div>
@@ -192,11 +313,11 @@ export default function UserProfile() {
           >
             <div className="flex items-center gap-2 mb-2">
               <Award size={20} style={{ color: "var(--color-hot-pink)" }} />
-              <span style={{ color: "var(--color-text-secondary)" }} className="text-sm">
+              <span style={{ color: "var(--color-text-secondary)" }} className="text-xs">
                 Prompts
               </span>
             </div>
-            <div className="text-3xl font-bold" style={{ color: "var(--color-hot-pink)" }}>
+            <div className="text-2xl font-bold" style={{ color: "var(--color-hot-pink)" }}>
               {stats.totalPrompts}
             </div>
           </div>
@@ -209,62 +330,76 @@ export default function UserProfile() {
             }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <Zap size={20} style={{ color: "var(--color-hot-pink)" }} />
-              <span style={{ color: "var(--color-text-secondary)" }} className="text-sm">
+              <Flame size={20} style={{ color: "var(--color-magenta)" }} />
+              <span style={{ color: "var(--color-text-secondary)" }} className="text-xs">
+                Comparisons
+              </span>
+            </div>
+            <div className="text-2xl font-bold" style={{ color: "var(--color-magenta)" }}>
+              {stats.totalComparisons}
+            </div>
+          </div>
+
+          <div
+            className="p-6 rounded-lg border"
+            style={{
+              background: "rgba(0, 217, 255, 0.05)",
+              borderColor: "rgba(0, 217, 255, 0.2)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <MessageSquare size={20} style={{ color: "var(--color-cyan)" }} />
+              <span style={{ color: "var(--color-text-secondary)" }} className="text-xs">
+                Forum Posts
+              </span>
+            </div>
+            <div className="text-2xl font-bold" style={{ color: "var(--color-cyan)" }}>
+              {stats.totalForumPosts}
+            </div>
+          </div>
+
+          <div
+            className="p-6 rounded-lg border"
+            style={{
+              background: "rgba(255, 20, 147, 0.05)",
+              borderColor: "rgba(255, 20, 147, 0.2)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Star size={20} style={{ color: "var(--color-hot-pink)" }} />
+              <span style={{ color: "var(--color-text-secondary)" }} className="text-xs">
                 Engagement
               </span>
             </div>
-            <div className="text-3xl font-bold" style={{ color: "var(--color-hot-pink)" }}>
+            <div className="text-2xl font-bold" style={{ color: "var(--color-hot-pink)" }}>
               {stats.engagementScore}%
             </div>
           </div>
         </div>
 
-        {/* Engagement Progress */}
-        <div
-          className="rounded-lg border p-6 mb-8"
-          style={{
-            background: "rgba(0, 217, 255, 0.05)",
-            borderColor: "rgba(0, 217, 255, 0.2)",
-          }}
-        >
-          <h3 className="text-xl font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
-            Engagement Progress
-          </h3>
-          <div className="space-y-4">
-            {[
-              { label: "Novice", min: 0, max: 20 },
-              { label: "Seeker", min: 20, max: 40 },
-              { label: "Initiate", min: 40, max: 60 },
-              { label: "Adept", min: 60, max: 80 },
-              { label: "Master", min: 80, max: 100 },
-            ].map((level) => (
-              <div key={level.label}>
-                <div className="flex justify-between mb-1">
-                  <span style={{ color: "var(--color-text-secondary)" }}>{level.label}</span>
-                  <span style={{ color: "var(--color-cyan)" }}>
-                    {level.min}% - {level.max}%
-                  </span>
-                </div>
-                <div
-                  className="h-2 rounded-full overflow-hidden"
-                  style={{ background: "rgba(0, 217, 255, 0.1)" }}
-                >
-                  <div
-                    className="h-full transition-all"
-                    style={{
-                      width: `${Math.max(0, Math.min(100, stats.engagementScore) - level.min) / (level.max - level.min) * 100}%`,
-                      background:
-                        stats.engagementScore >= level.min
-                          ? "var(--color-hot-pink)"
-                          : "transparent",
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
+        {/* Unlocked Milestones */}
+        {unlockedMilestones.length > 0 && (
+          <div
+            className="rounded-lg border p-6 mb-8"
+            style={{
+              background: "rgba(0, 217, 255, 0.05)",
+              borderColor: "rgba(0, 217, 255, 0.2)",
+            }}
+          >
+            <h3 className="text-xl font-bold mb-4" style={{ color: "var(--color-hot-pink)" }}>
+              ✦ UNLOCKED MILESTONES ({unlockedMilestones.length})
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {unlockedMilestones.map((milestone) => (
+                <AchievementBadge
+                  key={milestone.id}
+                  achievement={milestone}
+                  isUnlocked={true}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Recent Forum Posts */}
         {recentPosts.length > 0 && (
@@ -356,9 +491,9 @@ export default function UserProfile() {
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span style={{ color: "var(--color-text-secondary)" }}>Forum Posts</span>
+              <span style={{ color: "var(--color-text-secondary)" }}>PDF Exports</span>
               <span style={{ color: "var(--color-hot-pink)" }} className="font-semibold">
-                {recentPosts.length}
+                {stats.totalPDFExports}
               </span>
             </div>
           </div>

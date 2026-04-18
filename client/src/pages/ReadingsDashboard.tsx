@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
-import { TrendingUp, Calendar, Sparkles, Download, Share2 } from "lucide-react";
+import { TrendingUp, Calendar, Sparkles, Download, Share2, Zap, Award } from "lucide-react";
+import { calculateProgressionLevel, calculateUnlockedMilestones } from "@/lib/progressionHelpers";
 
 interface SavedReading {
   id: string;
@@ -26,6 +27,8 @@ export default function ReadingsDashboard() {
     spreadDistribution: [] as Array<{ name: string; value: number }>,
     readingsByDate: [] as Array<{ date: string; count: number }>,
   });
+  const [progression, setProgression] = useState<any>(null);
+  const [unlockedMilestones, setUnlockedMilestones] = useState<any[]>([]);
 
   useEffect(() => {
     const savedReadings = localStorage.getItem("tarotReadings");
@@ -33,6 +36,23 @@ export default function ReadingsDashboard() {
       const parsed = JSON.parse(savedReadings);
       setReadings(parsed);
       calculateStats(parsed, dateRange);
+      
+      // Calculate progression
+      const progressionData = calculateProgressionLevel(parsed.length);
+      setProgression(progressionData);
+      
+      // Calculate milestones
+      const comparisons = JSON.parse(localStorage.getItem("comparisonAnalyses") || "[]");
+      const forumPosts = JSON.parse(localStorage.getItem("forumPosts") || "[]");
+      const pdfExportCount = parsed.filter((r: any) => r.exportedToPDF).length;
+      
+      const milestones = calculateUnlockedMilestones({
+        readingCount: parsed.length,
+        comparisonCount: comparisons.length,
+        forumCount: forumPosts.length,
+        pdfExportCount,
+      });
+      setUnlockedMilestones(milestones);
     }
   }, [dateRange]);
 
@@ -133,6 +153,47 @@ export default function ReadingsDashboard() {
             🔄 Compare Readings
           </button>
         </div>
+
+        {/* Progression Section */}
+        {progression && (
+          <div className="mb-8 p-6 rounded-lg border" style={{ borderColor: "rgba(255, 20, 147, 0.3)", background: "rgba(255, 20, 147, 0.05)" }}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Zap size={24} style={{ color: "var(--color-hot-pink)" }} />
+                <h2 className="text-xl font-bold" style={{ color: "var(--color-hot-pink)" }}>YOUR PROGRESSION</h2>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold" style={{ color: "var(--color-magenta)" }}>{progression.symbol}</div>
+                <div style={{ color: "var(--color-cyan)" }} className="text-sm">Level {progression.level} - {progression.name}</div>
+              </div>
+            </div>
+            
+            <div className="mb-4">
+              <div className="flex justify-between mb-2">
+                <span style={{ color: "var(--color-text-secondary)" }}>Progress to next level</span>
+                <span style={{ color: "var(--color-cyan)" }}>{progression.progressToNext}%</span>
+              </div>
+              <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(0, 217, 255, 0.1)" }}>
+                <div
+                  className="h-full transition-all"
+                  style={{
+                    width: `${progression.progressToNext}%`,
+                    background: "linear-gradient(90deg, var(--color-magenta), var(--color-hot-pink))",
+                  }}
+                />
+              </div>
+            </div>
+            
+            {unlockedMilestones.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Award size={16} style={{ color: "var(--color-hot-pink)" }} />
+                  <span style={{ color: "var(--color-text-secondary)" }} className="text-sm">Milestones Unlocked: {unlockedMilestones.length}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Date Range Filter */}
         <div className="mb-8 p-6 rounded-lg border" style={{ borderColor: "rgba(0, 217, 255, 0.3)", background: "rgba(0, 217, 255, 0.05)" }}>
