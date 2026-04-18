@@ -6,6 +6,9 @@ export function cardNameToImageKey(cardName: string, suit?: string): string {
   // Remove "The " prefix if present
   let key = cardName.replace(/^The\s+/i, "");
   
+  // Remove commas and other special characters
+  key = key.replace(/[,]/g, "");
+  
   // Convert to lowercase and replace spaces with hyphens
   key = key.toLowerCase().replace(/\s+/g, "-");
   

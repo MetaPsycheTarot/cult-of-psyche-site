@@ -61,7 +61,9 @@ describe("tarot.pull", () => {
     result.cards.forEach((card) => {
       expect(card.name).toBeDefined();
       expect(card.meaning).toBeDefined();
-      expect(card.arcana).toBe("Major");
+      expect(card.suit).toBeDefined();
+      // Card can be from any suit (major, wands, cups, swords, pentacles)
+      expect(["major", "wands", "cups", "swords", "pentacles"]).toContain(card.suit);
     });
   });
 
@@ -97,21 +99,19 @@ describe("tarot.pull", () => {
 
     const result = await caller.pull({ cardCount: "3" });
 
-    const validNames = [
-      "The Awakening",
-      "The Shadow",
-      "The Mirror",
-      "The Void",
-      "The Spiral",
-      "The Threshold",
-      "The Ritual",
-      "The Dissolution",
-    ];
+    expect(result.cards).toHaveLength(3);
 
     result.cards.forEach((card) => {
-      expect(validNames).toContain(card.name);
+      expect(card.name).toBeDefined();
+      expect(card.meaning).toBeDefined();
+      expect(card.suit).toBeDefined();
+      expect(card.number).toBeDefined();
+      
+      // Card should be from a valid suit
+      expect(["major", "wands", "cups", "swords", "pentacles"]).toContain(card.suit);
+      
+      // Card ID should be positive
       expect(card.id).toBeGreaterThan(0);
-      expect(card.id).toBeLessThanOrEqual(8);
     });
   });
 });
