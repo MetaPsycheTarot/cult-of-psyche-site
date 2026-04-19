@@ -4,6 +4,7 @@ import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { MembershipBanner } from "@/components/MembershipBanner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useEffect } from "react";
+import { SchemaMarkup, organizationSchema, websiteSchema } from "@/components/SchemaMarkup";
 
 export default function Home() {
   const [, navigate] = useLocation();
@@ -24,7 +25,10 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--color-midnight)" }}>
+    <>
+      <SchemaMarkup schema={organizationSchema} />
+      <SchemaMarkup schema={websiteSchema} />
+      <div className="min-h-screen" style={{ background: "var(--color-midnight)" }}>
       {/* Hero Section */}
       <section className="relative py-24 md:py-32 px-4 overflow-hidden">
         {/* Accent lines */}
@@ -187,5 +191,6 @@ export default function Home() {
         </div>
       </section>
     </div>
+    </>
   );
 }
