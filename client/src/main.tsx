@@ -1,3 +1,12 @@
+// Global error handler for module loading failures
+window.addEventListener('error', (event) => {
+  console.error('[Global Error]', event.error);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('[Unhandled Promise Rejection]', event.reason);
+});
+
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG } from '@shared/const';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -9,6 +18,8 @@ import { Analytics } from "./components/Analytics";
 import { getLoginUrl } from "./const";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import "./index.css";
+
+console.log('[main.tsx] Module loaded successfully');
 
 const queryClient = new QueryClient();
 
