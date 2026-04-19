@@ -150,10 +150,9 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-// Disabled vite-plugin-manus-runtime as it strips the React entry script
-// This plugin was causing the production build to be missing the React entry point
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusDebugCollector()];
-// const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+// Re-enabled vite-plugin-manus-runtime which is essential for Manus platform integration
+// The plugin injects the Manus runtime script that provides platform features
+const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
 
 export default defineConfig({
   plugins,
