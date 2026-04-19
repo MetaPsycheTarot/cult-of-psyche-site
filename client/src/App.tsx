@@ -48,6 +48,9 @@ import ReferralProgram from "./pages/ReferralProgram";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
 import { CookieBanner } from "./components/CookieBanner";
+import FanArt from "./pages/FanArt";
+import Biography from "./pages/Biography";
+import AstrologyReport from "./pages/AstrologyReport";
 
 function Router() {
   const { isAuthenticated, loading } = useAuth();
@@ -71,6 +74,7 @@ function Router() {
       <Route path="/join" component={Join} />
       <Route path="/lore" component={Lore} />
       <Route path="/clips" component={Clips} />
+      <Route path="/biography" component={Biography} />
       <Route path="/privacy" component={PrivacyPolicy} />
       <Route path="/terms" component={TermsOfService} />
 
@@ -82,26 +86,28 @@ function Router() {
       {/* Protected Routes */}
       {isAuthenticated && (
         <>
-          <Route path={"/profile"} component={UserProfile} />
-          <Route path={"/forum"} component={CommunityForum} />
-          <Route path={"/leaderboard"} component={Leaderboard} />
-          <Route path={"/dashboard/readings"} component={ReadingsDashboard} />
-          <Route path={"/dashboard/compare"} component={ReadingComparison} />
-          <Route path={"/dashboard/analytics"} component={AnalyticsDashboard} />
-          <Route path={"/dashboard/email-analytics"} component={EmailAnalyticsDashboard} />
-          <Route path={"/dashboard/user-engagement"} component={UserEngagementReport} />
-          <Route path={"/referral"} component={ReferralProgram} />
-          <Route path={"/vault"} component={VaultDashboard} />
-          <Route path={"/vault/latest-drops"} component={VaultLatestDrops} />
-          <Route path={"/vault/content"} component={VaultContent} />
-          <Route path={"/vault/tarot"} component={VaultTarot} />
-          <Route path={"/vault/tools"} component={VaultTools} />
-          <Route path={"/vault/tools/nightmare-generator"} component={NightmareGenerator} />
-          <Route path={"/vault/tools/prompt-generator"} component={PromptGenerator} />
-          <Route path={"/vault/tools/tarot-pull"} component={TarotPull} />
-          <Route path={"/vault/lore"} component={VaultLore} />
-          <Route path={"/vault/gallery"} component={VaultGallery} />
-          <Route path={"/vault/archive"} component={VaultArchive} />
+          <Route path="/profile" component={UserProfile} />
+          <Route path="/forum" component={CommunityForum} />
+          <Route path="/leaderboard" component={Leaderboard} />
+          <Route path="/dashboard/readings" component={ReadingsDashboard} />
+          <Route path="/dashboard/compare" component={ReadingComparison} />
+          <Route path="/dashboard/analytics" component={AnalyticsDashboard} />
+          <Route path="/dashboard/email-analytics" component={EmailAnalyticsDashboard} />
+          <Route path="/dashboard/user-engagement" component={UserEngagementReport} />
+          <Route path="/referral" component={ReferralProgram} />
+          <Route path="/fan-art" component={FanArt} />
+          <Route path="/astrology" component={AstrologyReport} />
+          <Route path="/vault" component={VaultDashboard} />
+          <Route path="/vault/latest-drops" component={VaultLatestDrops} />
+          <Route path="/vault/content" component={VaultContent} />
+          <Route path="/vault/tarot" component={VaultTarot} />
+          <Route path="/vault/tools" component={VaultTools} />
+          <Route path="/vault/tools/nightmare-generator" component={NightmareGenerator} />
+          <Route path="/vault/tools/prompt-generator" component={PromptGenerator} />
+          <Route path="/vault/tools/tarot-pull" component={TarotPull} />
+          <Route path="/vault/lore" component={VaultLore} />
+          <Route path="/vault/gallery" component={VaultGallery} />
+          <Route path="/vault/archive" component={VaultArchive} />
         </>
       )}
 

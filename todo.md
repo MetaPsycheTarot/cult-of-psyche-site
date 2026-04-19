@@ -843,3 +843,64 @@
 - [x] Implement code splitting
 - [x] Add service worker for caching
 - [x] Optimize font loading
+
+
+## PHASE 3: FAN ART, BIOGRAPHY & ASTROLOGY FEATURES
+
+### Fan Art & Video Gallery Page
+- [ ] Create FanArt.tsx page component
+- [ ] Design gallery layout with grid/masonry
+- [ ] Implement fan art submission form
+- [ ] Add video embed support (YouTube, Vimeo)
+- [ ] Create database schema for fan submissions
+- [ ] Add moderation/approval workflow
+- [ ] Implement image upload to S3
+- [ ] Add filtering and search functionality
+- [ ] Create tRPC procedures for fan art CRUD operations
+
+### Biography & Origin Story Page
+- [ ] Create Biography.tsx page component
+- [ ] Write Cult of Psyche origin story content
+- [ ] Design timeline/narrative layout
+- [ ] Add images and visual elements
+- [ ] Create About section with project mission
+- [ ] Add team/creator information
+- [ ] Design responsive layout for mobile
+
+### Western Astrology Report Generator
+- [ ] Create AstrologyReport.tsx page component
+- [ ] Design astrology form with inputs:
+  - [ ] Name field
+  - [ ] Gender dropdown
+  - [ ] Date of Birth picker
+  - [ ] Time of Birth picker
+  - [ ] Place of Birth autocomplete (geocoding)
+- [ ] Implement astrology calculation engine:
+  - [ ] Sun sign calculation
+  - [ ] Moon sign calculation
+  - [ ] Rising sign (Ascendant) calculation
+  - [ ] House system calculations (Placidus)
+  - [ ] Planet positions
+  - [ ] Aspects calculation
+- [ ] Create astrology report template
+- [ ] Add "Cult Astrology" interpretation layer
+- [ ] Implement report generation and display
+- [ ] Add PDF export functionality
+- [ ] Create database schema for saved reports
+- [ ] Add user report history
+
+### Integration & Testing
+- [ ] Update App.tsx with new routes
+- [ ] Update navigation menu with new pages
+- [ ] Test all pages on dev server
+- [ ] Test form submissions and validations
+- [ ] Test astrology calculations accuracy
+- [ ] Test responsive design on mobile
+- [ ] Performance optimization
+- [ ] Create unit tests for astrology calculations
+
+### Deployment
+- [ ] Save checkpoint with all new features
+- [ ] Publish to production
+- [ ] Verify all pages render correctly
+- [ ] Test production functionality
