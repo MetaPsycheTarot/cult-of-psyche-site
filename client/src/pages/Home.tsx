@@ -3,10 +3,25 @@ import { useLocation } from "wouter";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { MembershipBanner } from "@/components/MembershipBanner";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useEffect } from "react";
 
 export default function Home() {
   const [, navigate] = useLocation();
   const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    // Set document title for SEO
+    document.title = "Cult of Psyche - Exclusive Occult Content & Tarot System";
+    
+    // Set meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute(
+        "content",
+        "Join the Cult of Psyche to access exclusive livestreams, tarot readings, and occult wisdom. Explore Psyche's Nightmares and unlock the system."
+      );
+    }
+  }, []);
 
   return (
     <div className="min-h-screen" style={{ background: "var(--color-midnight)" }}>
