@@ -53,6 +53,15 @@ async function startServer() {
     // Permissions Policy
     res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
     
+    // HTTP/2 Server Push for critical resources
+    if (req.url === '/' || req.url === '/index.html') {
+      res.setHeader('Link', [
+        '</assets/index.css>; rel=preload; as=style',
+        '<https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap>; rel=preload; as=style',
+        '</assets/index.js>; rel=preload; as=script',
+      ].join(', '));
+    }
+    
     next();
   });
   
