@@ -47,6 +47,7 @@ import UserEngagementReport from "./pages/UserEngagementReport";
 import ReferralProgram from "./pages/ReferralProgram";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
+import { CookieBanner } from "./components/CookieBanner";
 
 function Router() {
   const { isAuthenticated, loading } = useAuth();
@@ -118,6 +119,7 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <ToastContainer />
+          <CookieBanner />
           <TopNav />
           <Router />
           <Footer />
