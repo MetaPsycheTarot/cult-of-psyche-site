@@ -45,6 +45,8 @@ import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import EmailAnalyticsDashboard from "./pages/EmailAnalyticsDashboard";
 import UserEngagementReport from "./pages/UserEngagementReport";
 import ReferralProgram from "./pages/ReferralProgram";
+import { PrivacyPolicy } from "./pages/PrivacyPolicy";
+import { TermsOfService } from "./pages/TermsOfService";
 
 function Router() {
   const { isAuthenticated, loading } = useAuth();
@@ -61,13 +63,15 @@ function Router() {
 
   return (
     <Switch>
-      {/* Public Routes */}
-      <Route path={"/"} component={Home} />
-      <Route path={"/watch"} component={Watch} />
-      <Route path={"/about"} component={About} />
-      <Route path={"/join"} component={Join} />
-      <Route path={"/lore"} component={Lore} />
-      <Route path={"/clips"} component={Clips} />
+        {/* Public Routes */}
+      <Route path="/" component={Home} />
+      <Route path="/watch" component={Watch} />
+      <Route path="/about" component={About} />
+      <Route path="/join" component={Join} />
+      <Route path="/lore" component={Lore} />
+      <Route path="/clips" component={Clips} />
+      <Route path="/privacy" component={PrivacyPolicy} />
+      <Route path="/terms" component={TermsOfService} />
 
       {/* Auth Routes */}
       <Route path={"/login"} component={Login} />
