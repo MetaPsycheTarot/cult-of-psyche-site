@@ -1,5 +1,10 @@
+// Diagnostic: Log when main.tsx starts executing
+console.log('[main.tsx] Module loading started');
+
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG } from '@shared/const';
+
+console.log('[main.tsx] Imports resolved');
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
@@ -54,7 +59,16 @@ const trpcClient = trpc.createClient({
   ],
 });
 
-createRoot(document.getElementById("root")!).render(
+console.log('[main.tsx] About to render React app');
+const rootElement = document.getElementById("root");
+console.log('[main.tsx] Root element:', rootElement);
+
+if (!rootElement) {
+  console.error('[main.tsx] Root element not found!');
+  throw new Error('Root element not found');
+}
+
+createRoot(rootElement).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
       <NotificationProvider>
@@ -64,3 +78,5 @@ createRoot(document.getElementById("root")!).render(
     </QueryClientProvider>
   </trpc.Provider>
 );
+
+console.log('[main.tsx] React app rendered successfully');
