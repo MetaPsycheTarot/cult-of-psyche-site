@@ -54,7 +54,17 @@ const trpcClient = trpc.createClient({
   ],
 });
 
-createRoot(document.getElementById("root")!).render(
+// Ensure DOM is ready before mounting React
+function mountReactApp() {
+  const root = document.getElementById("root");
+  if (!root) {
+    console.error("[React] Root element not found, retrying...");
+    requestAnimationFrame(mountReactApp);
+    return;
+  }
+
+  console.log("[React] Mounting app to root element");
+  createRoot(root).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
       <NotificationProvider>
@@ -63,4 +73,12 @@ createRoot(document.getElementById("root")!).render(
       </NotificationProvider>
     </QueryClientProvider>
   </trpc.Provider>
-);
+  );
+}
+
+// Mount when DOM is ready
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mountReactApp);
+} else {
+  mountReactApp();
+}
