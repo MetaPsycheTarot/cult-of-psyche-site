@@ -53,14 +53,10 @@ async function startServer() {
     // Permissions Policy
     res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
     
-    // HTTP/2 Server Push for critical resources
-    if (req.url === '/' || req.url === '/index.html') {
-      res.setHeader('Link', [
-        '</assets/index.css>; rel=preload; as=style',
-        '<https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap>; rel=preload; as=style',
-        '</assets/index.js>; rel=preload; as=script',
-      ].join(', '));
-    }
+    // Note: Vite automatically generates correct modulepreload links in HTML.
+    // Hardcoding Link headers with non-hashed asset names causes production
+    // asset path mismatches and CDN caching issues. Removed to allow Vite's
+    // build-time generated preload hints to take precedence.
     
     next();
   });
